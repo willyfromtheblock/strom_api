@@ -8,7 +8,7 @@ import 'tools/logger.dart';
 
 class AlfredServer {
   final _logger = LoggerWrapper().logger;
-  final app = Alfred();
+  final app = Alfred(logLevel: LogType.warn);
   Location location = getLocation('Europe/Madrid');
 
   Future<void> serve() async {
