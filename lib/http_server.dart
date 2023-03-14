@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:alfred/alfred.dart';
 import 'package:timezone/timezone.dart';
@@ -13,10 +12,10 @@ class AlfredServer {
   Location location = getLocation('Europe/Madrid');
 
   Future<void> serve() async {
-    app.get('/price-now', (req, res) {
+    app.get('/price-now', (req, res) async {
       final prices = PriceWatcher().prices;
       final timeNow = TZDateTime.now(location);
-      return jsonEncode(
+      await res.json(
         prices
             .firstWhere(
               (element) =>
@@ -27,10 +26,10 @@ class AlfredServer {
       );
     });
 
-    app.get('/price-average-today', (req, res) {
+    app.get('/price-average-today', (req, res) async {
       final priceAverages = PriceWatcher().priceAverages;
       final timeNow = TZDateTime.now(location);
-      return jsonEncode(
+      await res.json(
         priceAverages
             .firstWhere(
               (element) =>
