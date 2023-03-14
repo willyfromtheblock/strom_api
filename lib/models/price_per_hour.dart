@@ -16,7 +16,7 @@ class PricePerHour {
       'time': time.toString(),
       'price': priceInEUR,
       'price_rating_percent': priceRelativeToDayAverageInPercent,
-      'price_rating': rating == PriceRating.peak ? 'peak' : 'offPeak',
+      'price_rating': rating == PriceRating.peak ? 'peak' : 'off_peak',
     };
   }
 
