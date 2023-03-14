@@ -190,6 +190,7 @@ class PriceWatcher {
         ),
       ),
     );
+
     for (var element in _priceAverages) {
       _logger.i('updatePriceAverage ${element.toString()}');
     }
