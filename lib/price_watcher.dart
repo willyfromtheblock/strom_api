@@ -3,8 +3,8 @@ import 'package:cron/cron.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart';
 
-import 'models/price_per_hour.dart';
 import 'models/price_average.dart';
+import 'models/price_per_hour.dart';
 import 'tools/http_wrapper.dart';
 import 'tools/logger.dart';
 import 'tools/round_to_double_precision.dart';

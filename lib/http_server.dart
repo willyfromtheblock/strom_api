@@ -42,6 +42,6 @@ class AlfredServer {
     });
 
     final server = await app.listen();
-    _logger.i('cron:Listening on ${server.port}');
+    _logger.i('alfred: Listening on ${server.port}');
   }
 }
