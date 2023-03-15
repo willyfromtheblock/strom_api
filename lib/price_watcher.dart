@@ -108,9 +108,14 @@ class PriceWatcher {
       (element) => element.time == dateTime,
     );
 
-    for (PricePerHour pricePerHour in _prices) {
+    for (PricePerHour pricePerHour in _prices.where(
+      (element) =>
+          element.time.day == dateTime.day &&
+          element.time.month == dateTime.month,
+    )) {
       final priveLevelInPercent = roundDoubleToPrecision(
           (pricePerHour.priceInEUR / average.averagePriceInEUR) * 100, 2);
+
       if (priveLevelInPercent > 90) {
         //10% margin filter
         pricePerHour.rating = PriceRating.peak;
@@ -174,9 +179,7 @@ class PriceWatcher {
     final List<double> pricesForRelevantDay = [];
     for (PricePerHour pricePerHour in _prices) {
       final timeOfPrice = pricePerHour.time;
-      if (timeOfPrice.day == time.day &&
-          timeOfPrice.month == time.month &&
-          timeOfPrice.year == time.year) {
+      if (timeOfPrice.day == time.day && timeOfPrice.month == time.month) {
         pricesForRelevantDay.add(pricePerHour.priceInEUR);
       }
     }
