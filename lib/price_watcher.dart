@@ -49,8 +49,8 @@ class PriceWatcher {
     cron.schedule(Schedule.parse('0 21 * * *'), () async {
       final oneDayAgo = TZDateTime.now(location).subtract(Duration(days: 1));
       _logger.i('cron: removing data before day ${oneDayAgo.day}');
-      _logger.i('cron: _prices before: ${_prices.length}');
-      _logger.i('cron: _priceAverages before: ${_priceAverages.length}');
+      _logger.d('cron: _prices before: ${_prices.length}');
+      _logger.d('cron: _priceAverages before: ${_priceAverages.length}');
 
       _prices.removeWhere(
         (element) => element.time.isBefore(oneDayAgo),
@@ -59,8 +59,8 @@ class PriceWatcher {
         (element) => element.time.isBefore(oneDayAgo),
       );
 
-      _logger.i('cron: _prices after: ${_prices.length}');
-      _logger.i('cron: _priceAverages after: ${_priceAverages.length}');
+      _logger.d('cron: _prices after: ${_prices.length}');
+      _logger.d('cron: _priceAverages after: ${_priceAverages.length}');
     });
   }
 
