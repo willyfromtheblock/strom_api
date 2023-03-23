@@ -17,4 +17,5 @@ void main() {
     assert(populatePriceDataHourCheck(23) == true);
     assert(populatePriceDataHourCheck(0) == false);
   });
+  //TODO more tests
 }

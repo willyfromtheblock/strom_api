@@ -43,4 +43,6 @@ class AlfredServer {
     final server = await app.listen();
     _logger.i('alfred: Listening on ${server.port}');
   }
+
+  //TODO endpoint to get price at time x
 }
