@@ -9,7 +9,7 @@ class PriceAverage {
 
   Map toMap() {
     return {
-      'time': time.toString(),
+      'time': time.toUtc().toString(),
       'average_price': averagePriceInEUR,
     };
   }
