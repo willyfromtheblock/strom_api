@@ -9,36 +9,55 @@ import 'tools/logger.dart';
 class AlfredServer {
   final _logger = LoggerWrapper().logger;
   final app = Alfred(logLevel: LogType.warn);
-  Location location = getLocation('Europe/Madrid');
+  Location locationMadrid = getLocation('Europe/Madrid');
+  Location locationCanaries = getLocation('Atlantic/Canary');
+
+  TZDateTime getTimeForLocation(String location) {
+    if (location == 'canaries') {
+      return TZDateTime.now(locationCanaries);
+    } else {
+      return TZDateTime.now(locationMadrid);
+    }
+  }
 
   Future<void> serve() async {
-    app.get('/price-now', (req, res) async {
-      final prices = PriceWatcher().prices;
-      final timeNow = TZDateTime.now(location);
-      await res.json(
-        prices
-            .firstWhere(
-              (element) =>
-                  element.time.hour == timeNow.hour &&
-                  element.time.day == timeNow.day,
-            )
-            .toMap(),
-      );
-    });
+    //price-now endpoint
+    app.get(
+      '/price-now/:location:[a-z]+',
+      (req, res) async {
+        final location = req.params['location'];
+        final timeNow = getTimeForLocation(location);
 
-    app.get('/price-average-today', (req, res) async {
-      final priceAverages = PriceWatcher().priceAverages;
-      final timeNow = TZDateTime.now(location);
-      await res.json(
-        priceAverages
-            .firstWhere(
-              (element) =>
-                  element.time.hour == timeNow.hour &&
-                  element.time.day == timeNow.day,
-            )
-            .toMap(),
-      );
-    });
+        final prices = PriceWatcher().prices;
+        await res.json(
+          prices
+              .firstWhere(
+                (element) =>
+                    element.time.hour == timeNow.hour &&
+                    element.time.day == timeNow.day,
+              )
+              .toMap(),
+        );
+      },
+    );
+
+    //price-average-now endpoint
+    app.get(
+      '/price-average-now/:location:[a-z]+',
+      (req, res) async {
+        final location = req.params['location'];
+        final timeNow = getTimeForLocation(location);
+
+        final priceAverages = PriceWatcher().priceAverages;
+        await res.json(
+          priceAverages
+              .firstWhere(
+                (element) => element.time.day == timeNow.day,
+              )
+              .toMap(),
+        );
+      },
+    );
 
     final server = await app.listen();
     _logger.i('alfred: Listening on ${server.port}');

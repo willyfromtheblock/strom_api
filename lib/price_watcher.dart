@@ -115,7 +115,9 @@ class PriceWatcher {
           element.time.month == dateTime.month,
     )) {
       final priveLevelInPercent = roundDoubleToPrecision(
-          (pricePerHour.priceInEUR / average.averagePriceInEUR) * 100, 2);
+        (pricePerHour.priceInEUR / average.averagePriceInEUR) * 100,
+        2,
+      );
 
       if (priveLevelInPercent > 90) {
         //10% margin filter
