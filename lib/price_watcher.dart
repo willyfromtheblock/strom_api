@@ -103,9 +103,10 @@ class PriceWatcher {
         endTime: dayAt2359,
       ),
     );
+
     _updatePriceAverage(dateTime);
     final average = _priceAverages.firstWhere(
-      (element) => element.time == dateTime,
+      (element) => element.time.day == dateTime.day,
     );
 
     for (PricePerHour pricePerHour in _prices.where(
@@ -186,7 +187,7 @@ class PriceWatcher {
 
     _priceAverages.add(
       PriceAverage(
-        time: time,
+        time: DateTime(time.year, time.month, time.day),
         averagePriceInEUR: roundDoubleToPrecision(
           pricesForRelevantDay.average,
           5,
