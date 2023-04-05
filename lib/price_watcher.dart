@@ -38,6 +38,9 @@ class PriceWatcher {
     await _populatePriceData();
 
     //schedule crons
+    /* 
+    This cronjob will get the price data every day at 20:30 (Madrid time)
+    */
     cron.schedule(Schedule.parse('30 20 * * *'), () async {
       //default timezone for docker-compose.yml is Europe/Madrid as well
       _logger.i('cron: get price for next day');
@@ -46,6 +49,9 @@ class PriceWatcher {
       );
     });
 
+    /* 
+    This cronjob cleans up the data table, every day at 21:00 (Madrid time)
+    */
     cron.schedule(Schedule.parse('0 21 * * *'), () async {
       final oneDayAgo = TZDateTime.now(location).subtract(Duration(days: 1));
       _logger.i('cron: removing data before day ${oneDayAgo.day}');
