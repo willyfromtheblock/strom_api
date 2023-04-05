@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:alfred/alfred.dart';
+import 'package:collection/collection.dart';
+import 'package:pvpc_server/tools/price_zone.dart';
 import 'package:timezone/timezone.dart';
 
 import 'price_watcher.dart';
@@ -19,23 +21,34 @@ class AlfredServer {
     },
   );
 
-  TZDateTime getTimeForLocation(String location, DateTime timestamp) {
-    if (location == 'canaries') {
-      return TZDateTime.from(timestamp, locationCanaries);
-    } else if (location == 'peninsula') {
-      return TZDateTime.from(timestamp, locationMadrid);
-    } else {
+  PriceZone convertStringToZone(String zone) {
+    final zoneEnum =
+        PriceZone.values.firstWhereOrNull((element) => element.name == zone);
+
+    if (zoneEnum == null) {
       throw AlfredException(
         400,
         {
           "message":
-              "Invalid timezone. Valid values are 'canaries' or 'peninsula'"
+              "Invalid zone. Valid values are peninsular, canarias, baleares, ceuta and melilla"
         },
       );
+    }
+    return zoneEnum;
+  }
+
+  TZDateTime getTimeForZone(PriceZone zone, DateTime timestamp) {
+    if (zone.name == 'canarias') {
+      return TZDateTime.from(timestamp, locationCanaries);
+    } else {
+      return TZDateTime.from(timestamp, locationMadrid);
     }
   }
 
   DateTime parseDateTime(int timestampInSecondsSinceEpoch) {
+    if (timestampInSecondsSinceEpoch == 0) {
+      return DateTime.now();
+    }
     return DateTime.fromMillisecondsSinceEpoch(
       timestampInSecondsSinceEpoch * 1000,
     );
@@ -45,18 +58,22 @@ class AlfredServer {
     /* 
     price endpoint
     
-    Parameter 1: int - timestamp in s e c o n d s unix time U T C
-    Parameter 2: String - timezone, either 'canaries' or 'peninsula'
+    Parameter 1: 
+    int - timestamp in s e c o n d s unix time U T C
+    if timestamp is 0, current local time for the zone will be used
+                
+    Parameter 2: 
+    String - zone: either peninsular, canarias, baleares, ceuta or melilla
 
-    Returns JSON with price data for the hour that matches the timestamp in the given timezone.  
-    Returned "time" object is U T C time in the given timezone.
+    Returns JSON with price data for the hour that matches the timestamp in the given zone.  
+    Returned "time" object is  l o c a l time in the given zone.
     */
     app.get(
-      '/price/:timestamp:int/:timezone:[a-z]+',
+      '/price/:timestamp:int/:zone:[a-z]+',
       (req, res) async {
-        final timezone = req.params['timezone'];
+        final zone = convertStringToZone(req.params['zone']);
         final timestamp = parseDateTime(req.params['timestamp']);
-        final timeNow = getTimeForLocation(timezone, timestamp);
+        final timeNow = getTimeForZone(zone, timestamp);
 
         final prices = PriceWatcher().prices;
         await res.json(
@@ -64,7 +81,8 @@ class AlfredServer {
               .firstWhere(
                 (element) =>
                     element.time.hour == timeNow.hour &&
-                    element.time.day == timeNow.day,
+                    element.time.day == timeNow.day &&
+                    element.zone == zone,
                 orElse: () => throw notInSetException,
               )
               .toMap(),
@@ -75,24 +93,28 @@ class AlfredServer {
     /* 
     price-average endpoint
     
-    Parameter 1: int - timestamp in s e c o n d s unix time U T C
-    Parameter 2: String - timezone, either 'canaries' or 'peninsula'
+    Parameter 1: 
+    int - timestamp in s e c o n d s unix time U T C
+    if timestamp is 0, current local time for the zone will be used
+    Parameter 2: 
+    String - zone: either peninsular, canarias, baleares, ceuta or melilla
 
-    Returns JSON with price average for the day that matches the timestamp in the given timezone.  
-    Returned "time" object is l o c a l time in the given timezone.
+    Returns JSON with price average for the day that matches the timestamp in the given zone.  
+    Returned "time" object is l o c a l time in the given zone.
     */
     app.get(
-      '/price-average/:timestamp:int/:timezone:[a-z]+',
+      '/price-average/:timestamp:int/:zone:[a-z]+',
       (req, res) async {
-        final timezone = req.params['timezone'];
+        final zone = convertStringToZone(req.params['zone']);
         final timestamp = parseDateTime(req.params['timestamp']);
-        final timeNow = getTimeForLocation(timezone, timestamp);
+        final timeNow = getTimeForZone(zone, timestamp);
 
         final priceAverages = PriceWatcher().priceAverages;
         await res.json(
           priceAverages
               .firstWhere(
-                (element) => element.time.day == timeNow.day,
+                (element) =>
+                    element.time.day == timeNow.day && element.zone == zone,
                 orElse: () => throw notInSetException,
               )
               .toMap(),
