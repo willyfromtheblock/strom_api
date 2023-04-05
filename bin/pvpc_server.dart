@@ -7,18 +7,15 @@ import 'package:pvpc_server/tools/logger.dart';
 
 Future<void> main(List<String> arguments) async {
   Map<String, String> env = Platform.environment;
-  Map<String, String> requiredEnvs = {
-    "LOG_LEVEL": "",
-    "HTTP_PORT": "",
-  };
+  List<String> requiredEnvs = ["LOG_LEVEL", "HTTP_PORT", "RATING_MARGIN"];
 
-  requiredEnvs.forEach((key, value) {
-    if (!env.containsKey(key)) {
-      throw Exception("$key needs to be in environment");
-    } else if (env[key]!.isEmpty) {
-      throw Exception("$key needs to have a value");
+  for (var requiredEnv in requiredEnvs) {
+    if (!env.containsKey(requiredEnv)) {
+      throw Exception("$requiredEnv needs to be in environment");
+    } else if (env[requiredEnv]!.isEmpty) {
+      throw Exception("$requiredEnv needs to have a value");
     }
-  });
+  }
 
   LoggerWrapper().init();
   HttpWrapper().init();

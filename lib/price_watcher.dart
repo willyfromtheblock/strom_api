@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:collection/collection.dart';
 import 'package:cron/cron.dart';
 import 'package:pvpc_server/tools/price_zone.dart';
@@ -135,8 +137,10 @@ class PriceWatcher {
           2,
         );
 
-        if (priceLevelInPercent > 90) {
-          //10% margin filter
+        if (priceLevelInPercent >
+            int.parse(
+              Platform.environment['RATING_MARGIN']!,
+            )) {
           pricePerHour.rating = PriceRating.peak;
         } else {
           pricePerHour.rating = PriceRating.offPeak;
