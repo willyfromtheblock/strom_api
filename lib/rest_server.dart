@@ -40,33 +40,6 @@ class RESTServer {
     },
   );
 
-  PriceZone _convertStringToZone(String zone) {
-    final zoneEnum =
-        PriceZone.values.firstWhereOrNull((element) => element.name == zone);
-
-    if (zoneEnum == null) {
-      throw notInZoneException;
-    }
-    return zoneEnum;
-  }
-
-  TZDateTime _getTimeForZone(PriceZone zone, DateTime timestamp) {
-    if (zone.name == 'canarias') {
-      return TZDateTime.from(timestamp, _locationCanaries);
-    } else {
-      return TZDateTime.from(timestamp, _locationMadrid);
-    }
-  }
-
-  DateTime _parseDateTime(int timestampInSecondsSinceEpoch) {
-    if (timestampInSecondsSinceEpoch == 0) {
-      return DateTime.now();
-    }
-    return DateTime.fromMillisecondsSinceEpoch(
-      timestampInSecondsSinceEpoch * 1000,
-    );
-  }
-
   Future<void> serve() async {
     /// price endpoint
     ///
@@ -138,5 +111,32 @@ class RESTServer {
       int.parse(Platform.environment['HTTP_PORT']!),
     );
     _logger.i('http_server: Listening on ${server.port}');
+  }
+
+  PriceZone _convertStringToZone(String zone) {
+    final zoneEnum =
+        PriceZone.values.firstWhereOrNull((element) => element.name == zone);
+
+    if (zoneEnum == null) {
+      throw notInZoneException;
+    }
+    return zoneEnum;
+  }
+
+  TZDateTime _getTimeForZone(PriceZone zone, DateTime timestamp) {
+    if (zone.name == 'canarias') {
+      return TZDateTime.from(timestamp, _locationCanaries);
+    } else {
+      return TZDateTime.from(timestamp, _locationMadrid);
+    }
+  }
+
+  DateTime _parseDateTime(int timestampInSecondsSinceEpoch) {
+    if (timestampInSecondsSinceEpoch == 0) {
+      return DateTime.now();
+    }
+    return DateTime.fromMillisecondsSinceEpoch(
+      timestampInSecondsSinceEpoch * 1000,
+    );
   }
 }
