@@ -1,5 +1,5 @@
 # PVPC_Server
-[![Tests](https://github.com/willyfromtheblock/dart_scripthash_generator/actions/workflows/dart.yml/badge.svg)](https://github.com/willyfromtheblock/dart_scripthash_generator/actions/workflows/dart.yml)
+[![Tests](https://github.com/willyfromtheblock/pvpc_server/actions/workflows/test.yaml/badge.svg)](https://github.com/willyfromtheblock/pvpc_server/actions/workflows/test.yaml)
 
 A versatile **RESTful** program that aggregates and serves hourly data for **Spanish electricity prices** from the Precio voluntario para el pequeño consumidor (**PVPC**).
 
