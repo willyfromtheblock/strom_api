@@ -1,3 +1,5 @@
+import 'package:pvpc_server/tools/price_zone.dart';
+
 enum PriceRating { peak, offPeak }
 
 class PricePerHour {
@@ -5,6 +7,7 @@ class PricePerHour {
   double priceInEUR;
   PriceRating rating = PriceRating.peak;
   double priceRelativeToDayAverageInPercent = 0.0;
+  PriceZone zone;
 
   @override
   String toString() {
@@ -14,6 +17,7 @@ class PricePerHour {
   Map toMap() {
     return {
       'time': time.toUtc().toString(),
+      'zone': zone.name,
       'price': priceInEUR,
       'price_rating_percent': priceRelativeToDayAverageInPercent,
       'price_rating': rating == PriceRating.peak ? 'peak' : 'off_peak',
@@ -23,5 +27,6 @@ class PricePerHour {
   PricePerHour({
     required this.time,
     required this.priceInEUR,
+    required this.zone,
   });
 }

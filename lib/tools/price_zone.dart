@@ -1,4 +1,4 @@
-enum PriceZones {
+enum PriceZone {
   peninsular,
   canarias,
   baleares,

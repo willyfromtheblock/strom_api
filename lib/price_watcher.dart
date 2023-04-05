@@ -1,5 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:cron/cron.dart';
+import 'package:pvpc_server/tools/price_zone.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart';
 
@@ -73,12 +74,13 @@ class PriceWatcher {
   Future<Map<String, dynamic>> _getDataFromAPI({
     required String startTime,
     required String endTime,
+    required String zone,
   }) async {
     try {
       return await HttpWrapper().get(
         requestJson: true,
         path:
-            '/datos/mercados/precios-mercados-tiempo-real?start_date=$startTime&end_date=$endTime&time_trunc=hour',
+            '/datos/mercados/precios-mercados-tiempo-real?start_date=$startTime&end_date=$endTime&time_trunc=hour&geo_limit=$zone',
       );
     } catch (e) {
       _logger.e(
@@ -102,43 +104,55 @@ class PriceWatcher {
       return;
     }
 
-    _logger.i('getPricesFromAPI: for $isoDate');
-    _parseApiResult(
-      await _getDataFromAPI(
-        startTime: daytMidnight,
-        endTime: dayAt2359,
-      ),
-    );
+    //loop through pricezones, get the respective prices and update their averages
+    for (var zone in PriceZone.values) {
+      _logger.i('getPricesFromAPI: for $isoDate in ${zone.name}');
 
-    _updatePriceAverage(dateTime);
-    final average = _priceAverages.firstWhere(
-      (element) => element.time.day == dateTime.day,
-    );
+      _parseApiResult(
+        res: await _getDataFromAPI(
+          startTime: daytMidnight,
+          endTime: dayAt2359,
+          zone: zone.name,
+        ),
+        zone: zone,
+      );
+      //populate price averages
+      _updatePriceAverage(time: dateTime, zone: zone);
 
-    for (PricePerHour pricePerHour in _prices.where(
-      (element) =>
-          element.time.day == dateTime.day &&
-          element.time.month == dateTime.month,
-    )) {
-      final priveLevelInPercent = roundDoubleToPrecision(
-        (pricePerHour.priceInEUR / average.averagePriceInEUR) * 100,
-        2,
+      //rate each hourly price
+      final average = _priceAverages.firstWhere(
+        (element) => element.time.day == dateTime.day && element.zone == zone,
       );
 
-      if (priveLevelInPercent > 90) {
-        //10% margin filter
-        pricePerHour.rating = PriceRating.peak;
-      } else {
-        pricePerHour.rating = PriceRating.offPeak;
+      for (PricePerHour pricePerHour in _prices.where(
+        (element) =>
+            element.time.day == dateTime.day &&
+            element.time.month == dateTime.month &&
+            element.zone == zone,
+      )) {
+        final priceLevelInPercent = roundDoubleToPrecision(
+          (pricePerHour.priceInEUR / average.averagePriceInEUR) * 100,
+          2,
+        );
+
+        if (priceLevelInPercent > 90) {
+          //10% margin filter
+          pricePerHour.rating = PriceRating.peak;
+        } else {
+          pricePerHour.rating = PriceRating.offPeak;
+        }
+        pricePerHour.priceRelativeToDayAverageInPercent = priceLevelInPercent;
+        _logger.d(
+          'getPricesFromAPI added ${pricePerHour.toString()}',
+        );
       }
-      pricePerHour.priceRelativeToDayAverageInPercent = priveLevelInPercent;
-      _logger.i(
-        'getPricesFromAPI added ${pricePerHour.toString()}',
-      );
     }
   }
 
-  _parseApiResult(Map<String, dynamic> res) {
+  _parseApiResult({
+    required Map<String, dynamic> res,
+    required PriceZone zone,
+  }) {
     final List included = res["included"];
     bool found1001 = false;
 
@@ -151,11 +165,13 @@ class PriceWatcher {
 
         for (var value in values) {
           var priceInCents = roundDoubleToPrecision(value['value'] / 1000, 5);
-          final newPPH = PricePerHour(
-            time: TZDateTime.parse(location, value['datetime']),
-            priceInEUR: priceInCents,
+          _prices.add(
+            PricePerHour(
+              time: TZDateTime.parse(location, value['datetime']),
+              priceInEUR: priceInCents,
+              zone: zone,
+            ),
           );
-          _prices.add(newPPH);
         }
       }
     }
@@ -184,30 +200,30 @@ class PriceWatcher {
     }
   }
 
-  void _updatePriceAverage(DateTime time) {
+  void _updatePriceAverage({required DateTime time, required PriceZone zone}) {
     final List<double> pricesForRelevantDay = [];
     for (PricePerHour pricePerHour in _prices) {
       final timeOfPrice = pricePerHour.time;
-      if (timeOfPrice.day == time.day && timeOfPrice.month == time.month) {
+      if (pricePerHour.zone == zone &&
+          timeOfPrice.day == time.day &&
+          timeOfPrice.month == time.month) {
         pricesForRelevantDay.add(pricePerHour.priceInEUR);
       }
     }
 
+    final averagePriceInEUR = roundDoubleToPrecision(
+      pricesForRelevantDay.average,
+      5,
+    );
+
     _priceAverages.add(
       PriceAverage(
         time: DateTime(time.year, time.month, time.day),
-        averagePriceInEUR: roundDoubleToPrecision(
-          pricesForRelevantDay.average,
-          5,
-        ),
+        zone: zone,
+        averagePriceInEUR: averagePriceInEUR,
       ),
     );
 
-    for (var element in _priceAverages) {
-      _logger.i('updatePriceAverage ${element.toString()}');
-    }
+    _logger.i('updatePriceAverage ${zone.name} $averagePriceInEUR');
   }
-
-  //TODO get ceuta and melilla individually
-  //TODO get canarias individually
 }
