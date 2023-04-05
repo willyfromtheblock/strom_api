@@ -75,7 +75,7 @@ class AlfredServer {
     /* 
     price-average endpoint
     
-    Parameter 1: int - timestamp in unix time UTC! 
+    Parameter 1: int - timestamp in s e c o n d s unix time U T C
     Parameter 2: String - timezone, either 'canaries' or 'peninsula'
 
     Returns JSON with price average for the day that matches the timestamp in the given timezone.  
