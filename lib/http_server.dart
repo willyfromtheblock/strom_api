@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:alfred/alfred.dart';
 import 'package:collection/collection.dart';
@@ -122,7 +123,9 @@ class AlfredServer {
       },
     );
 
-    final server = await app.listen();
-    _logger.i('alfred: Listening on ${server.port}');
+    final server = await app.listen(
+      int.parse(Platform.environment['HTTP_PORT']!),
+    );
+    _logger.i('http_server: Listening on ${server.port}');
   }
 }

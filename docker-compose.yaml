@@ -8,9 +8,10 @@ services:
     environment: 
       - TZ=Europe/Madrid    
       - LOG_LEVEL=info
+      - HTTP_PORT=3001
     restart: always
     ports: 
-      - "3009:3000"    
+      - "3001:3001"    
     logging:
       driver: "json-file"
       options:

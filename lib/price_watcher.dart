@@ -143,7 +143,7 @@ class PriceWatcher {
         }
         pricePerHour.priceRelativeToDayAverageInPercent = priceLevelInPercent;
         _logger.d(
-          'getPricesFromAPI added ${pricePerHour.toString()}',
+          'getPricesFromAPI added ${pricePerHour.toString()} in ${zone.name}',
         );
       }
     }
