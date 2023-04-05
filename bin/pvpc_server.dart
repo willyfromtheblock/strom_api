@@ -25,5 +25,5 @@ Future<void> main(List<String> arguments) async {
   LoggerWrapper().init();
   HttpWrapper().init();
   await PriceWatcher().init();
-  await AlfredServer().serve();
+  await RESTServer().serve();
 }

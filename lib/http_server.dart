@@ -1,3 +1,8 @@
+/// Find the implementation of the PVPC endpoints.
+///
+/// {@category REST}
+library rest_server;
+
 import 'dart:async';
 import 'dart:io';
 
@@ -9,7 +14,7 @@ import 'package:timezone/timezone.dart';
 import 'price_watcher.dart';
 import 'tools/logger.dart';
 
-class AlfredServer {
+class RESTServer {
   final _logger = LoggerWrapper().logger;
 
   final _httpServer = Alfred(
@@ -20,11 +25,18 @@ class AlfredServer {
 
   final Location _locationMadrid = getLocation('Europe/Madrid');
   final Location _locationCanaries = getLocation('Atlantic/Canary');
-  final AlfredException _notInSetException = AlfredException(
+  final AlfredException notInSetException = AlfredException(
     400,
     {
       "message":
           "This timestamp is not included in the current table. pvpc_server only serves the present day and the next day. Next day's data is available after 20:30 (Madrid time) of the preceeding day."
+    },
+  );
+  final AlfredException notInZoneException = AlfredException(
+    400,
+    {
+      "message":
+          "Invalid zone. Valid values are peninsular, canarias, baleares, ceuta and melilla"
     },
   );
 
@@ -33,13 +45,7 @@ class AlfredServer {
         PriceZone.values.firstWhereOrNull((element) => element.name == zone);
 
     if (zoneEnum == null) {
-      throw AlfredException(
-        400,
-        {
-          "message":
-              "Invalid zone. Valid values are peninsular, canarias, baleares, ceuta and melilla"
-        },
-      );
+      throw notInZoneException;
     }
     return zoneEnum;
   }
@@ -89,7 +95,7 @@ class AlfredServer {
                     element.time.hour == timeNow.hour &&
                     element.time.day == timeNow.day &&
                     element.zone == zone,
-                orElse: () => throw _notInSetException,
+                orElse: () => throw notInSetException,
               )
               .toMap(),
         );
@@ -121,7 +127,7 @@ class AlfredServer {
               .firstWhere(
                 (element) =>
                     element.time.day == timeNow.day && element.zone == zone,
-                orElse: () => throw _notInSetException,
+                orElse: () => throw notInSetException,
               )
               .toMap(),
         );
