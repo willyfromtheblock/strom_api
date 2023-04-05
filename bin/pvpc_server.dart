@@ -21,6 +21,12 @@ Future<void> main(List<String> arguments) async {
       throw Exception("$requiredEnv needs to have a value");
     }
   }
+  final margin = int.parse(env['RATING_MARGIN']!);
+  if (margin > 99) {
+    throw Exception("RATING_MARGIN needs to be less than 99");
+  } else if (margin < 0) {
+    throw Exception("RATING_MARGIN needs to be a positive number");
+  }
 
   LoggerWrapper().init();
   HttpWrapper().init();
