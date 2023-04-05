@@ -11,7 +11,8 @@ Future<void> main() async {
     "PRICE_LOG_LEVEL",
     "HTTP_LOG_LEVEL",
     "HTTP_PORT",
-    "RATING_MARGIN"
+    "RATING_MARGIN",
+    "RAPID_API_SECRET"
   ];
 
   for (var requiredEnv in requiredEnvs) {
