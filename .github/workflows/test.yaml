@@ -1,23 +1,34 @@
 name: Tests
-
-on:
+'on':
   push:
-    branches: [ main ]
+    branches:
+      - main
   pull_request:
-    branches: [ main ]
-
+    branches:
+      - main
 jobs:
-  build:
+  analyze-and-test-without-env:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: dart-lang/setup-dart@v1.5.0
-
       - name: Install dependencies
         run: dart pub get
-        
       - name: Analyze project source
         run: dart analyze
-
       - name: Run tests
         run: dart test test/app_test_no_env.dart
+  test-with-env:
+    runs-on: ubuntu-latest
+    environment:
+      - PRICE_LOG_LEVEL=info
+      - HTTP_LOG_LEVEL=info
+      - HTTP_PORT=3001
+      - RATING_MARGIN=10
+    steps:
+      - uses: actions/checkout@v2
+      - uses: dart-lang/setup-dart@v1.5.0
+      - name: Install dependencies
+        run: dart pub get
+      - name: Run tests
+        run: dart test test/app_test_with_env.dart

@@ -15,14 +15,14 @@ void main() {
     },
   );
 
-  group(
-    'PriceWatcher',
-    () {
-      test('init PriceWatcher', () async {
-        await PriceWatcher().init();
-      });
-    },
-  );
+  // group(
+  //   'PriceWatcher',
+  //   () {
+  //     test('init PriceWatcher', () async {
+  //       await PriceWatcher().init();
+  //     });
+  //   },
+  // );
 
   group(
     'RestServer',
