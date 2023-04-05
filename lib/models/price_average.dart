@@ -7,7 +7,7 @@ class PriceAverage {
 
   @override
   String toString() {
-    return "$time - $averagePriceInEUR ";
+    return "$time - ${zone.name} - $averagePriceInEUR ";
   }
 
   Map toMap() {

@@ -11,7 +11,7 @@ class PricePerHour {
 
   @override
   String toString() {
-    return "$time - $priceInEUR€ - $rating - $priceRelativeToDayAverageInPercent%";
+    return "$time - ${zone.name} - $priceInEUR€ - $rating - $priceRelativeToDayAverageInPercent%";
   }
 
   Map toMap() {

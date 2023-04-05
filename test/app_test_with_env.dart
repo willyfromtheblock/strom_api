@@ -29,6 +29,15 @@ void main() {
     () {
       test('check data populated', () async {
         expect(PriceWatcher().prices.isNotEmpty, true);
+        expect(PriceWatcher().priceAverages.isNotEmpty, true);
+      });
+      test('dump price data', () async {
+        for (var element in PriceWatcher().prices) {
+          print(element.toString());
+        }
+        for (var element in PriceWatcher().priceAverages) {
+          print(element.toString());
+        }
       });
     },
   );
