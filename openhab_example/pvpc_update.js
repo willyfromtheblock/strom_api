@@ -1,4 +1,7 @@
-const response = actions.HTTP.sendHttpGetRequest('https://pvpc.coinerella.com/price/0/peninsular');
+const response = actions.HTTP.sendHttpGetRequest('https://pvpc-hourly-spanish-energy-prices-api.p.rapidapi.com/price/0/peninsular', {
+    'X-RapidAPI-Key': 'your-rapid-api-key',
+    'X-RapidAPI-Host': 'your-rapid-api-host'
+});
 const parsed = JSON.parse(response);
 
 const currentPriceItem = items.getItem('PVPCServer_current_price');
