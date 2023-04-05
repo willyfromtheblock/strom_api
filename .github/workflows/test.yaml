@@ -21,10 +21,10 @@ jobs:
   test-with-env:
     runs-on: ubuntu-latest
     environment:
-      - PRICE_LOG_LEVEL=info
-      - HTTP_LOG_LEVEL=info
-      - HTTP_PORT=3001
-      - RATING_MARGIN=10
+      PRICE_LOG_LEVEL: info
+      HTTP_LOG_LEVEL: info
+      HTTP_PORT: 3001
+      RATING_MARGIN: 10
     steps:
       - uses: actions/checkout@v2
       - uses: dart-lang/setup-dart@v1.5.0
