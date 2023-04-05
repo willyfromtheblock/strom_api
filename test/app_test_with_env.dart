@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:pvpc_server/price_watcher.dart';
 import 'package:pvpc_server/tools/price_zone.dart';
@@ -11,7 +13,12 @@ void main() {
     String restURL = 'http://localhost:3001';
 
     dio = Dio(
-      BaseOptions(baseUrl: restURL),
+      BaseOptions(
+        baseUrl: restURL,
+        headers: {
+          "X-RapidAPI-Proxy-Secret": Platform.environment['RAPID_API_SECRET']
+        },
+      ),
     );
   });
 
