@@ -7,7 +7,8 @@ services:
     container_name: pvpc_server
     environment: 
       - TZ=Europe/Madrid    
-      - LOG_LEVEL=info
+      - PRICE_LOG_LEVEL=info
+      - HTTP_LOG_LEVEL=info
       - HTTP_PORT=3001
       - RATING_MARGIN=10
     restart: always

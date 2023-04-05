@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the serve method from the AlfredServer class, for the Dart programming language.">
+  <title>serve method - AlfredServer class - http_server library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
+
+  
+</head>
+
+
+<body data-base-href="../../" data-using-base-href="false" class="light-theme">
+
+<div id="overlay-under-drawer"></div>
+
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../../index.html">pvpc_server</a></li>
+    <li><a href="../../http_server/http_server-library.html">http_server</a></li>
+    <li><a href="../../http_server/AlfredServer-class.html">AlfredServer</a></li>
+    <li class="self-crumb">serve method</li>
+  </ol>
+  <div class="self-name">serve</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <div class="toggle" id="theme-button">
+    <label for="theme">
+      <input type="checkbox" id="theme" value="light-theme">
+      <span class="material-symbols-outlined">
+        brightness_4
+      </span>
+    </label>
+  </div>
+</header>
+<main>
+
+  <div id="dartdoc-main-content" class="main-content">
+      <div>
+<h1><span class="kind-method">serve</span> method 
+    <a href="https://dart.dev/null-safety" class="feature feature-null-safety" title="Supports the null safety language feature.">Null safety</a>
+</h1></div>
+
+    <section class="multi-line-signature">
+      
+
+<span class="returntype"><a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
+<span class="name ">serve</span>(<wbr>)
+
+      
+
+    </section>
+    
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">Future&lt;void&gt; serve() async {
+  &#47;&#47;&#47; price endpoint
+  &#47;&#47;&#47;
+  &#47;&#47;&#47; Returns JSON with price data for the hour that matches the timestamp in the given zone.
+  &#47;&#47;&#47; Returned &quot;time&quot; object is  l o c a l time in the given zone.
+  &#47;&#47;&#47;
+  &#47;&#47;&#47; Parameter 1:
+  &#47;&#47;&#47; int - timestamp: in s e c o n d s unix time U T C
+  &#47;&#47;&#47; if timestamp is 0, current local time for the zone will be used
+  &#47;&#47;&#47;
+  &#47;&#47;&#47; Parameter 2:
+  &#47;&#47;&#47; String - zone: either peninsular, canarias, baleares, ceuta or melilla
+
+  _httpServer.get(
+    &#39;&#47;price&#47;:timestamp:int&#47;:zone:[a-z]+&#39;,
+    (req, res) async {
+      final zone = _convertStringToZone(req.params[&#39;zone&#39;]);
+      final timestamp = _parseDateTime(req.params[&#39;timestamp&#39;]);
+      final timeNow = _getTimeForZone(zone, timestamp);
+
+      final prices = PriceWatcher().prices;
+      await res.json(
+        prices
+            .firstWhere(
+              (element) =&gt;
+                  element.time.hour == timeNow.hour &amp;&amp;
+                  element.time.day == timeNow.day &amp;&amp;
+                  element.zone == zone,
+              orElse: () =&gt; throw _notInSetException,
+            )
+            .toMap(),
+      );
+    },
+  );
+
+  &#47;&#47;&#47; price-average endpoint
+  &#47;&#47;&#47;
+  &#47;&#47;&#47; Returns JSON with price average for the day that matches the timestamp in the given zone.
+  &#47;&#47;&#47; Returned &quot;time&quot; object is l o c a l time in the given zone.
+  &#47;&#47;&#47;
+  &#47;&#47;&#47; Parameter 1:
+  &#47;&#47;&#47; int - timestamp: in s e c o n d s unix time U T C
+  &#47;&#47;&#47; if timestamp is 0, current local time for the zone will be used
+  &#47;&#47;&#47; Parameter 2:
+  &#47;&#47;&#47; String - zone: either peninsular, canarias, baleares, ceuta or melilla
+  &#47;&#47;&#47;
+
+  _httpServer.get(
+    &#39;&#47;price-average&#47;:timestamp:int&#47;:zone:[a-z]+&#39;,
+    (req, res) async {
+      final zone = _convertStringToZone(req.params[&#39;zone&#39;]);
+      final timestamp = _parseDateTime(req.params[&#39;timestamp&#39;]);
+      final timeNow = _getTimeForZone(zone, timestamp);
+
+      final priceAverages = PriceWatcher().priceAverages;
+      await res.json(
+        priceAverages
+            .firstWhere(
+              (element) =&gt;
+                  element.time.day == timeNow.day &amp;&amp; element.zone == zone,
+              orElse: () =&gt; throw _notInSetException,
+            )
+            .toMap(),
+      );
+    },
+  );
+
+  final server = await _httpServer.listen(
+    int.parse(Platform.environment[&#39;HTTP_PORT&#39;]!),
+  );
+  _logger.i(&#39;http_server: Listening on ${server.port}&#39;);
+}</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+  <li><a href="../../index.html">pvpc_server</a></li>
+  <li><a href="../../http_server/http_server-library.html">http_server</a></li>
+  <li><a href="../../http_server/AlfredServer-class.html">AlfredServer</a></li>
+  <li class="self-crumb">serve method</li>
+</ol>
+
+
+    <h5>AlfredServer class</h5>
+    <ol>
+
+        <li class="section-title"><a href="../../http_server/AlfredServer-class.html#constructors">Constructors</a></li>
+          <li><a href="../../http_server/AlfredServer/AlfredServer.html">AlfredServer</a></li>
+
+
+        <li class="section-title inherited">
+          <a href="../../http_server/AlfredServer-class.html#instance-properties">Properties</a>
+        </li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">hashCode</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></li>
+
+        <li class="section-title"><a href="../../http_server/AlfredServer-class.html#instance-methods">Methods</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></li>
+          <li><a href="../../http_server/AlfredServer/serve.html">serve</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/toString.html">toString</a></li>
+
+        <li class="section-title inherited"><a href="../../http_server/AlfredServer-class.html#operators">Operators</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/operator_equals.html">operator ==</a></li>
+
+
+
+
+</ol>
+
+  </div><!--/.sidebar-offcanvas-->
+
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+  </div><!--/.sidebar-offcanvas-->
+
+</main>
+
+<footer>
+  <span class="no-break">
+    pvpc_server
+      1.0.0
+  </span>
+
+  
+</footer>
+
+
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
+
+
+
+</body>
+
+</html>
+

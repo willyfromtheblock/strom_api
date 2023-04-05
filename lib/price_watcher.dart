@@ -17,8 +17,8 @@ class PriceWatcher {
   final List<PricePerHour> _prices = [];
   final List<PriceAverage> _priceAverages = [];
   final _logger = LoggerWrapper().logger;
-  final cron = Cron();
-  late Location location;
+  final _cron = Cron();
+  late Location _location;
 
   factory PriceWatcher() {
     return _cache.putIfAbsent('httpWrapper', () => PriceWatcher._internal());
@@ -35,7 +35,7 @@ class PriceWatcher {
 
   Future<void> init() async {
     tz.initializeTimeZones();
-    location = getLocation('Europe/Madrid');
+    _location = getLocation('Europe/Madrid');
 
     //populate prices
     await _populatePriceData();
@@ -44,19 +44,19 @@ class PriceWatcher {
     /* 
     This cronjob will get the price data every day at 20:30 (Madrid time)
     */
-    cron.schedule(Schedule.parse('30 20 * * *'), () async {
+    _cron.schedule(Schedule.parse('30 20 * * *'), () async {
       //default timezone for docker-compose.yml is Europe/Madrid as well
       _logger.i('cron: get price for next day');
       await _getPricesFromAPI(
-        TZDateTime.now(location).add(Duration(days: 1)),
+        TZDateTime.now(_location).add(Duration(days: 1)),
       );
     });
 
     /* 
     This cronjob cleans up the data table, every day at 21:00 (Madrid time)
     */
-    cron.schedule(Schedule.parse('0 21 * * *'), () async {
-      final oneDayAgo = TZDateTime.now(location).subtract(Duration(days: 1));
+    _cron.schedule(Schedule.parse('0 21 * * *'), () async {
+      final oneDayAgo = TZDateTime.now(_location).subtract(Duration(days: 1));
       _logger.i('cron: removing data before day ${oneDayAgo.day}');
       _logger.d('cron: _prices before: ${_prices.length}');
       _logger.d('cron: _priceAverages before: ${_priceAverages.length}');
@@ -171,7 +171,7 @@ class PriceWatcher {
           var priceInCents = roundDoubleToPrecision(value['value'] / 1000, 5);
           _prices.add(
             PricePerHour(
-              time: TZDateTime.parse(location, value['datetime']),
+              time: TZDateTime.parse(_location, value['datetime']),
               priceInEUR: priceInCents,
               zone: zone,
             ),
@@ -188,7 +188,7 @@ class PriceWatcher {
   }
 
   Future<void> _populatePriceData() async {
-    final now = TZDateTime.now(location);
+    final now = TZDateTime.now(_location);
     await _getPricesFromAPI(now); //TODAY
 
     if (now.hour >= 20 && now.hour <= 23) {

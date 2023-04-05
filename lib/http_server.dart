@@ -11,10 +11,16 @@ import 'tools/logger.dart';
 
 class AlfredServer {
   final _logger = LoggerWrapper().logger;
-  final app = Alfred(logLevel: LogType.warn);
-  Location locationMadrid = getLocation('Europe/Madrid');
-  Location locationCanaries = getLocation('Atlantic/Canary');
-  AlfredException notInSetException = AlfredException(
+
+  final _httpServer = Alfred(
+    logLevel: LogType.values.firstWhere(
+      (element) => Platform.environment['HTTP_LOG_LEVEL']! == element.name,
+    ),
+  );
+
+  final Location _locationMadrid = getLocation('Europe/Madrid');
+  final Location _locationCanaries = getLocation('Atlantic/Canary');
+  final AlfredException _notInSetException = AlfredException(
     400,
     {
       "message":
@@ -22,7 +28,7 @@ class AlfredServer {
     },
   );
 
-  PriceZone convertStringToZone(String zone) {
+  PriceZone _convertStringToZone(String zone) {
     final zoneEnum =
         PriceZone.values.firstWhereOrNull((element) => element.name == zone);
 
@@ -38,15 +44,15 @@ class AlfredServer {
     return zoneEnum;
   }
 
-  TZDateTime getTimeForZone(PriceZone zone, DateTime timestamp) {
+  TZDateTime _getTimeForZone(PriceZone zone, DateTime timestamp) {
     if (zone.name == 'canarias') {
-      return TZDateTime.from(timestamp, locationCanaries);
+      return TZDateTime.from(timestamp, _locationCanaries);
     } else {
-      return TZDateTime.from(timestamp, locationMadrid);
+      return TZDateTime.from(timestamp, _locationMadrid);
     }
   }
 
-  DateTime parseDateTime(int timestampInSecondsSinceEpoch) {
+  DateTime _parseDateTime(int timestampInSecondsSinceEpoch) {
     if (timestampInSecondsSinceEpoch == 0) {
       return DateTime.now();
     }
@@ -56,25 +62,24 @@ class AlfredServer {
   }
 
   Future<void> serve() async {
-    /* 
-    price endpoint
-    
-    Parameter 1: 
-    int - timestamp: in s e c o n d s unix time U T C
-    if timestamp is 0, current local time for the zone will be used
-                
-    Parameter 2: 
-    String - zone: either peninsular, canarias, baleares, ceuta or melilla
+    /// price endpoint
+    ///
+    /// Returns JSON with price data for the hour that matches the timestamp in the given zone.
+    /// Returned "time" object is  l o c a l time in the given zone.
+    ///
+    /// Parameter 1:
+    /// int - timestamp: in s e c o n d s unix time U T C
+    /// if timestamp is 0, current local time for the zone will be used
+    ///
+    /// Parameter 2:
+    /// String - zone: either peninsular, canarias, baleares, ceuta or melilla
 
-    Returns JSON with price data for the hour that matches the timestamp in the given zone.  
-    Returned "time" object is  l o c a l time in the given zone.
-    */
-    app.get(
+    _httpServer.get(
       '/price/:timestamp:int/:zone:[a-z]+',
       (req, res) async {
-        final zone = convertStringToZone(req.params['zone']);
-        final timestamp = parseDateTime(req.params['timestamp']);
-        final timeNow = getTimeForZone(zone, timestamp);
+        final zone = _convertStringToZone(req.params['zone']);
+        final timestamp = _parseDateTime(req.params['timestamp']);
+        final timeNow = _getTimeForZone(zone, timestamp);
 
         final prices = PriceWatcher().prices;
         await res.json(
@@ -84,31 +89,31 @@ class AlfredServer {
                     element.time.hour == timeNow.hour &&
                     element.time.day == timeNow.day &&
                     element.zone == zone,
-                orElse: () => throw notInSetException,
+                orElse: () => throw _notInSetException,
               )
               .toMap(),
         );
       },
     );
 
-    /* 
-    price-average endpoint
-    
-    Parameter 1: 
-    int - timestamp: in s e c o n d s unix time U T C
-    if timestamp is 0, current local time for the zone will be used
-    Parameter 2: 
-    String - zone: either peninsular, canarias, baleares, ceuta or melilla
+    /// price-average endpoint
+    ///
+    /// Returns JSON with price average for the day that matches the timestamp in the given zone.
+    /// Returned "time" object is l o c a l time in the given zone.
+    ///
+    /// Parameter 1:
+    /// int - timestamp: in s e c o n d s unix time U T C
+    /// if timestamp is 0, current local time for the zone will be used
+    /// Parameter 2:
+    /// String - zone: either peninsular, canarias, baleares, ceuta or melilla
+    ///
 
-    Returns JSON with price average for the day that matches the timestamp in the given zone.  
-    Returned "time" object is l o c a l time in the given zone.
-    */
-    app.get(
+    _httpServer.get(
       '/price-average/:timestamp:int/:zone:[a-z]+',
       (req, res) async {
-        final zone = convertStringToZone(req.params['zone']);
-        final timestamp = parseDateTime(req.params['timestamp']);
-        final timeNow = getTimeForZone(zone, timestamp);
+        final zone = _convertStringToZone(req.params['zone']);
+        final timestamp = _parseDateTime(req.params['timestamp']);
+        final timeNow = _getTimeForZone(zone, timestamp);
 
         final priceAverages = PriceWatcher().priceAverages;
         await res.json(
@@ -116,14 +121,14 @@ class AlfredServer {
               .firstWhere(
                 (element) =>
                     element.time.day == timeNow.day && element.zone == zone,
-                orElse: () => throw notInSetException,
+                orElse: () => throw _notInSetException,
               )
               .toMap(),
         );
       },
     );
 
-    final server = await app.listen(
+    final server = await _httpServer.listen(
       int.parse(Platform.environment['HTTP_PORT']!),
     );
     _logger.i('http_server: Listening on ${server.port}');

@@ -7,7 +7,12 @@ import 'package:pvpc_server/tools/logger.dart';
 
 Future<void> main(List<String> arguments) async {
   Map<String, String> env = Platform.environment;
-  List<String> requiredEnvs = ["LOG_LEVEL", "HTTP_PORT", "RATING_MARGIN"];
+  List<String> requiredEnvs = [
+    "PRICE_LOG_LEVEL",
+    "HTTP_LOG_LEVEL",
+    "HTTP_PORT",
+    "RATING_MARGIN"
+  ];
 
   for (var requiredEnv in requiredEnvs) {
     if (!env.containsKey(requiredEnv)) {
