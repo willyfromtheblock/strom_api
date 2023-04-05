@@ -57,7 +57,8 @@ It can easily be reverse proxied if need be.
 
 ## Development
 ### Run tests
-- `dart test`
+- `dart test test/app_test_no_env.dart`
+- `dart test test/app_test_with_env.dart`
 
 ### Generate docs
 - `dart doc .`

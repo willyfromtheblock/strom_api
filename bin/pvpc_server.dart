@@ -1,11 +1,11 @@
 import 'dart:io';
 
-import 'package:pvpc_server/http_server.dart';
+import 'package:pvpc_server/rest_server.dart';
 import 'package:pvpc_server/price_watcher.dart';
 import 'package:pvpc_server/tools/http_wrapper.dart';
 import 'package:pvpc_server/tools/logger.dart';
 
-Future<void> main(List<String> arguments) async {
+Future<void> main() async {
   Map<String, String> env = Platform.environment;
   List<String> requiredEnvs = [
     "PRICE_LOG_LEVEL",
