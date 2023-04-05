@@ -20,7 +20,7 @@ jobs:
         run: dart test test/app_test_no_env.dart
   test-with-env:
     runs-on: ubuntu-latest
-    environment:
+    env:
       PRICE_LOG_LEVEL: info
       HTTP_LOG_LEVEL: info
       HTTP_PORT: 3001
