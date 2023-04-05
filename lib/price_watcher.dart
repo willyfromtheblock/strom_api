@@ -138,9 +138,10 @@ class PriceWatcher {
         );
 
         if (priceLevelInPercent >
-            int.parse(
-              Platform.environment['RATING_MARGIN']!,
-            )) {
+            100 -
+                int.parse(
+                  Platform.environment['RATING_MARGIN']!,
+                )) {
           pricePerHour.rating = PriceRating.peak;
         } else {
           pricePerHour.rating = PriceRating.offPeak;
