@@ -59,7 +59,7 @@ class AlfredServer {
     price endpoint
     
     Parameter 1: 
-    int - timestamp in s e c o n d s unix time U T C
+    int - timestamp: in s e c o n d s unix time U T C
     if timestamp is 0, current local time for the zone will be used
                 
     Parameter 2: 
@@ -94,7 +94,7 @@ class AlfredServer {
     price-average endpoint
     
     Parameter 1: 
-    int - timestamp in s e c o n d s unix time U T C
+    int - timestamp: in s e c o n d s unix time U T C
     if timestamp is 0, current local time for the zone will be used
     Parameter 2: 
     String - zone: either peninsular, canarias, baleares, ceuta or melilla
