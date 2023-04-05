@@ -16,7 +16,7 @@ class PricePerHour {
 
   Map toMap() {
     return {
-      'time': time.toUtc().toString(),
+      'time': time.toString(),
       'zone': zone.name,
       'price': priceInEUR,
       'price_rating_percent': priceRelativeToDayAverageInPercent,
