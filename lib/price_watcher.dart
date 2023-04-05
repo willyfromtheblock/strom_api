@@ -201,4 +201,7 @@ class PriceWatcher {
       _logger.i('updatePriceAverage ${element.toString()}');
     }
   }
+
+  //TODO get ceuta and melilla individually
+  //TODO get canarias individually
 }
