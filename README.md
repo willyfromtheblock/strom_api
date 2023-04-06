@@ -60,5 +60,8 @@ It can easily be reverse proxied if need be.
 - `dart test test/app_test_no_env.dart`
 - `dart test test/app_test_with_env.dart`
 
+### Simulate Github actions
+- `act --secret-file my.secrets`
+
 ### Generate docs
 - `dart doc .`
