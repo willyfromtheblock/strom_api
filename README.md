@@ -10,12 +10,12 @@ Just run this server, and it will do all the heavy lifting for you.
 - Data Source: REData API
 - The server will automatically fetch the price data for the next day, each day at 20:30 (Madrid time).
 
-## Examples
+# Examples
 ### Home Automation
 - Use as data source in home automation to make decisions based on current power price
 - see [**openhab_example/strom_update.js**](/openhab_example/strom_update.js "**openhab_example/strom_update.js**") (you'll need to create the referenced items before)
 
-### REST endpoints
+# REST endpoints
 - General schema: endpoint/**timestampInSecondsSinceEpoch**/**zone**
 - [Available price zones](https://strom-docs.coinerella.com/price_zones/PriceZone "Available price zones")
 - GET `https://strom.coinerella.com/price/0/peninsular`

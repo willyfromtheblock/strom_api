@@ -1,7 +1,7 @@
 # https://dart.dev/guides/libraries/private-files
 # Created by `dart pub`
 .dart_tool/
-.vscode/*
+.vscode/
 .DS_Store
 docker-compose.override.yaml
 my.secrets
