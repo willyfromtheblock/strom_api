@@ -3,7 +3,7 @@
 /// {@category REST}
 library price_zones;
 
-enum PriceZone {
+enum PriceZones {
   peninsular,
   canarias,
   baleares,

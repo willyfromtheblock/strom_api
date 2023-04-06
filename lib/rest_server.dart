@@ -8,7 +8,7 @@ import 'dart:io';
 
 import 'package:alfred/alfred.dart';
 import 'package:collection/collection.dart';
-import 'package:strom_api/tools/price_zone.dart';
+import 'package:strom_api/zones/price_zone.dart';
 import 'package:timezone/timezone.dart';
 
 import 'price_watcher.dart';
@@ -132,9 +132,9 @@ class RESTServer {
     _logger.i('http_server: Listening on ${server.port}');
   }
 
-  PriceZone _convertStringToZone(String zone) {
+  PriceZones _convertStringToZone(String zone) {
     final zoneEnum =
-        PriceZone.values.firstWhereOrNull((element) => element.name == zone);
+        PriceZones.values.firstWhereOrNull((element) => element.name == zone);
 
     if (zoneEnum == null) {
       throw notInZoneException;
@@ -142,7 +142,7 @@ class RESTServer {
     return zoneEnum;
   }
 
-  TZDateTime _getTimeForZone(PriceZone zone, DateTime timestamp) {
+  TZDateTime _getTimeForZone(PriceZones zone, DateTime timestamp) {
     if (zone.name == 'canarias') {
       return TZDateTime.from(timestamp, _locationCanaries);
     } else {

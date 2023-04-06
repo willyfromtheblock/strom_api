@@ -1,9 +1,9 @@
-import 'package:strom_api/tools/price_zone.dart';
+import 'package:strom_api/zones/price_zone.dart';
 
 class PriceAverage {
   DateTime time;
   double averagePriceInEUR;
-  PriceZone zone;
+  PriceZones zone;
 
   @override
   String toString() {

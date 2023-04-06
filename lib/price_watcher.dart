@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:collection/collection.dart';
 import 'package:cron/cron.dart';
 import 'package:strom_api/price_api_wrappers/api_wrapper_es.dart';
-import 'package:strom_api/tools/price_zone.dart';
+import 'package:strom_api/zones/price_zone.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart';
 
@@ -80,7 +80,7 @@ class PriceWatcher {
     final dayAt2359 = '${isoDate}T23:59';
 
     //loop through pricezones, get the respective prices and update their averages
-    for (var zone in PriceZone.values) {
+    for (var zone in PriceZones.values) {
       if (_prices.firstWhereOrNull(
             (element) =>
                 element.time.day == dateTime.day && element.zone == zone,
@@ -96,11 +96,11 @@ class PriceWatcher {
       List<PricePerHour> results = [];
 
       switch (zone) {
-        case PriceZone.peninsular:
-        case PriceZone.canarias:
-        case PriceZone.baleares:
-        case PriceZone.ceuta:
-        case PriceZone.melilla:
+        case PriceZones.peninsular:
+        case PriceZones.canarias:
+        case PriceZones.baleares:
+        case PriceZones.ceuta:
+        case PriceZones.melilla:
         default:
           results = await APIWrapperES().fetchData(
             startTime: dayAtMidnight,
@@ -116,35 +116,39 @@ class PriceWatcher {
       _updatePriceAverage(time: dateTime, zone: zone);
 
       //rate each hourly price
-      final average = _priceAverages.firstWhere(
-        (element) => element.time.day == dateTime.day && element.zone == zone,
+      _rateHourlyPrices(dateTime, zone);
+    }
+  }
+
+  void _rateHourlyPrices(DateTime dateTime, PriceZones zone) {
+    final average = _priceAverages.firstWhere(
+      (element) => element.time.day == dateTime.day && element.zone == zone,
+    );
+
+    for (PricePerHour pricePerHour in _prices.where(
+      (element) =>
+          element.time.day == dateTime.day &&
+          element.time.month == dateTime.month &&
+          element.zone == zone,
+    )) {
+      final priceLevelInPercent = roundDoubleToPrecision(
+        (pricePerHour.priceInEUR / average.averagePriceInEUR) * 100,
+        2,
       );
 
-      for (PricePerHour pricePerHour in _prices.where(
-        (element) =>
-            element.time.day == dateTime.day &&
-            element.time.month == dateTime.month &&
-            element.zone == zone,
-      )) {
-        final priceLevelInPercent = roundDoubleToPrecision(
-          (pricePerHour.priceInEUR / average.averagePriceInEUR) * 100,
-          2,
-        );
-
-        if (priceLevelInPercent >
-            100 -
-                int.parse(
-                  Platform.environment['RATING_MARGIN']!,
-                )) {
-          pricePerHour.rating = PriceRating.peak;
-        } else {
-          pricePerHour.rating = PriceRating.offPeak;
-        }
-        pricePerHour.priceRelativeToDayAverageInPercent = priceLevelInPercent;
-        _logger.d(
-          'getPricesFromAPI added ${pricePerHour.toString()} in ${zone.name}',
-        );
+      if (priceLevelInPercent >
+          100 -
+              int.parse(
+                Platform.environment['RATING_MARGIN']!,
+              )) {
+        pricePerHour.rating = PriceRating.peak;
+      } else {
+        pricePerHour.rating = PriceRating.offPeak;
       }
+      pricePerHour.priceRelativeToDayAverageInPercent = priceLevelInPercent;
+      _logger.d(
+        'getPricesFromAPI added ${pricePerHour.toString()} in ${zone.name}',
+      );
     }
   }
 
@@ -165,7 +169,7 @@ class PriceWatcher {
     }
   }
 
-  void _updatePriceAverage({required DateTime time, required PriceZone zone}) {
+  void _updatePriceAverage({required DateTime time, required PriceZones zone}) {
     final List<double> pricesForRelevantDay = [];
     for (PricePerHour pricePerHour in _prices) {
       final timeOfPrice = pricePerHour.time;

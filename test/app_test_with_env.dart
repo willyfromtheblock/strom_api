@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:strom_api/price_watcher.dart';
-import 'package:strom_api/tools/price_zone.dart';
+import 'package:strom_api/zones/price_zone.dart';
 
 import '../bin/strom_api.dart' as app;
 import 'package:test/test.dart';
@@ -54,7 +54,7 @@ void main() {
       'price-now',
       () {
         test('get all available zones', () async {
-          for (var zone in PriceZone.values) {
+          for (var zone in PriceZones.values) {
             await dio.get('/price/0/${zone.name}');
           }
         });
@@ -97,7 +97,7 @@ void main() {
       'price-average',
       () {
         test('get all available zones', () async {
-          for (var zone in PriceZone.values) {
+          for (var zone in PriceZones.values) {
             await dio.get('/price-average/0/${zone.name}');
           }
         });

@@ -3,7 +3,7 @@ import 'package:timezone/timezone.dart';
 import '../models/price_per_hour.dart';
 import '../tools/http_wrapper.dart';
 import '../tools/logger.dart';
-import '../tools/price_zone.dart';
+import '../zones/price_zone.dart';
 import '../tools/round_to_double_precision.dart';
 
 class APIWrapperES {
@@ -18,7 +18,7 @@ class APIWrapperES {
   Future<List<PricePerHour>> fetchData({
     required String startTime,
     required String endTime,
-    required PriceZone zone,
+    required PriceZones zone,
     required Location location,
   }) async {
     return _parseApiResult(
@@ -53,7 +53,7 @@ class APIWrapperES {
 
   List<PricePerHour> _parseApiResult({
     required Map<String, dynamic> res,
-    required PriceZone zone,
+    required PriceZones zone,
     required Location location,
   }) {
     final List included = res["included"];
@@ -87,5 +87,4 @@ class APIWrapperES {
     }
     return answer;
   }
-  //TODO tests
 }

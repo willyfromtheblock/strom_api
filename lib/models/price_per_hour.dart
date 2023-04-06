@@ -1,4 +1,4 @@
-import 'package:strom_api/tools/price_zone.dart';
+import 'package:strom_api/zones/price_zone.dart';
 
 enum PriceRating { peak, offPeak }
 
@@ -7,7 +7,7 @@ class PricePerHour {
   double priceInEUR;
   PriceRating rating = PriceRating.peak;
   double priceRelativeToDayAverageInPercent = 0.0;
-  PriceZone zone;
+  PriceZones zone;
 
   @override
   String toString() {
