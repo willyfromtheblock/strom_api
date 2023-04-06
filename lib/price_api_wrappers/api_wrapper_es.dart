@@ -8,6 +8,12 @@ import '../tools/round_to_double_precision.dart';
 
 class APIWrapperES {
   final _logger = LoggerWrapper().logger;
+  static final Map<String, APIWrapperES> _cache = <String, APIWrapperES>{};
+
+  factory APIWrapperES() {
+    return _cache.putIfAbsent('httpWrapper', () => APIWrapperES._internal());
+  }
+  APIWrapperES._internal();
 
   Future<List<PricePerHour>> fetchData({
     required String dayAtMidnight,
