@@ -16,7 +16,7 @@ import 'tools/logger.dart';
 
 class RESTServer {
   final _logger = LoggerWrapper().logger;
-  final protectedMode;
+  final bool protectedMode;
 
   RESTServer({required this.protectedMode});
 
