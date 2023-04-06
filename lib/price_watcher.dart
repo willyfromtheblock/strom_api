@@ -74,6 +74,7 @@ class PriceWatcher {
   }
 
   Future<void> _getPricesFromAPI(DateTime dateTime) async {
+    //TODO this is still ES specific and should be changed
     final isoDate = dateTime.toIso8601String().split('T')[0];
     final dayAtMidnight = '${isoDate}T00:00';
     final dayAt2359 = '${isoDate}T23:59';
