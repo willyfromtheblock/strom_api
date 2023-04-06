@@ -16,15 +16,15 @@ class APIWrapperES {
   APIWrapperES._internal();
 
   Future<List<PricePerHour>> fetchData({
-    required String dayAtMidnight,
-    required String dayAt2359,
+    required String startTime,
+    required String endTime,
     required PriceZone zone,
     required Location location,
   }) async {
     return _parseApiResult(
       res: await _getDataFromAPI(
-        startTime: dayAtMidnight,
-        endTime: dayAt2359,
+        startTime: startTime,
+        endTime: endTime,
         zone: zone.name,
       ),
       zone: zone,

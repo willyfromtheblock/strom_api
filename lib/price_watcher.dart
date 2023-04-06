@@ -90,15 +90,24 @@ class PriceWatcher {
     //loop through pricezones, get the respective prices and update their averages
     for (var zone in PriceZone.values) {
       _logger.i('getPricesFromAPI: for $isoDate in ${zone.name}');
+      List<PricePerHour> results = [];
 
-      _prices.addAll(
-        await APIWrapperES().fetchData(
-          dayAtMidnight: dayAtMidnight,
-          dayAt2359: dayAt2359,
-          zone: zone,
-          location: _location,
-        ),
-      );
+      switch (zone) {
+        case PriceZone.peninsular:
+        case PriceZone.canarias:
+        case PriceZone.baleares:
+        case PriceZone.ceuta:
+        case PriceZone.melilla:
+        default:
+          results = await APIWrapperES().fetchData(
+            startTime: dayAtMidnight,
+            endTime: dayAt2359,
+            zone: zone,
+            location: _location,
+          );
+      }
+      //add fetched prices
+      _prices.addAll(results);
 
       //populate price averages
       _updatePriceAverage(time: dateTime, zone: zone);
