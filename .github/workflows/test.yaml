@@ -18,14 +18,30 @@ jobs:
         run: dart analyze
       - name: Run tests
         run: dart test test/app_test_no_env.dart
-  test-with-env:
+  test-with-env-protected:
     runs-on: ubuntu-latest
     env:
       PRICE_LOG_LEVEL: info
       HTTP_LOG_LEVEL: info
       HTTP_PORT: 3001
       RATING_MARGIN: 10
+      PROTECTED_MODE: true
       RAPID_API_SECRET: ${{ secrets.RAPID_API_SECRET }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: dart-lang/setup-dart@v1.5.0
+      - name: Install dependencies
+        run: dart pub get
+      - name: Run tests
+        run: dart test test/app_test_with_env.dart
+  test-with-env-unprotected:
+    runs-on: ubuntu-latest
+    env:
+      PRICE_LOG_LEVEL: info
+      HTTP_LOG_LEVEL: info
+      HTTP_PORT: 3001
+      RATING_MARGIN: 10
+      PROTECTED_MODE: false
     steps:
       - uses: actions/checkout@v2
       - uses: dart-lang/setup-dart@v1.5.0
