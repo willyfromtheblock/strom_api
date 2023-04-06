@@ -1,5 +1,5 @@
-# Strom_API
-[![Tests](https://github.com/willyfromtheblock/Strom_API/actions/workflows/test.yaml/badge.svg)](https://github.com/willyfromtheblock/Strom_API/actions/workflows/test.yaml)
+# strom_api
+[![Tests](https://github.com/willyfromtheblock/strom_api/actions/workflows/test.yaml/badge.svg)](https://github.com/willyfromtheblock/strom_api/actions/workflows/test.yaml)
 
 A versatile **RESTful** program that aggregates and serves hourly data for **electricity prices**.
 
@@ -52,7 +52,7 @@ Just run this server, and it will do all the heavy lifting for you.
 
 ### Setup
 - execute `./deploy.sh`
-- Default port is 3001. **Congratulations**. You now have a running Strom_API on this port. 
+- Default port is 3001. **Congratulations**. You now have a running strom_api on this port. 
 It can easily be reverse proxied if need be.
 
 ### Updating

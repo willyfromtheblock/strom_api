@@ -1,4 +1,4 @@
-/// Find the implementation of the Strom_API endpoints.
+/// Find the implementation of the strom_api endpoints.
 ///
 /// {@category REST}
 library rest_server;
@@ -32,7 +32,7 @@ class RESTServer {
     400,
     {
       "message":
-          "This timestamp is not included in the current table. Strom_API does not serve this time frame."
+          "This timestamp is not included in the current table. strom_api does not serve this time frame."
     },
   );
   final AlfredException notInZoneException = AlfredException(
