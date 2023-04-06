@@ -2,13 +2,13 @@ import 'dart:io';
 
 import 'package:collection/collection.dart';
 import 'package:cron/cron.dart';
+import 'package:pvpc_server/price_api_wrappers/api_wrapper_es.dart';
 import 'package:pvpc_server/tools/price_zone.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart';
 
 import 'models/price_average.dart';
 import 'models/price_per_hour.dart';
-import 'tools/http_wrapper.dart';
 import 'tools/logger.dart';
 import 'tools/round_to_double_precision.dart';
 
@@ -73,28 +73,9 @@ class PriceWatcher {
     });
   }
 
-  Future<Map<String, dynamic>> _getDataFromAPI({
-    required String startTime,
-    required String endTime,
-    required String zone,
-  }) async {
-    try {
-      return await HttpWrapper().get(
-        requestJson: true,
-        path:
-            '/datos/mercados/precios-mercados-tiempo-real?start_date=$startTime&end_date=$endTime&time_trunc=hour&geo_limit=$zone',
-      );
-    } catch (e) {
-      _logger.e(
-        'getDataFromAPI: Unable to get prices from API. Shutting down...',
-      );
-      throw Exception(e.toString());
-    }
-  }
-
   Future<void> _getPricesFromAPI(DateTime dateTime) async {
     final isoDate = dateTime.toIso8601String().split('T')[0];
-    final daytMidnight = '${isoDate}T00:00';
+    final dayAtMidnight = '${isoDate}T00:00';
     final dayAt2359 = '${isoDate}T23:59';
 
     if (_prices
@@ -110,14 +91,15 @@ class PriceWatcher {
     for (var zone in PriceZone.values) {
       _logger.i('getPricesFromAPI: for $isoDate in ${zone.name}');
 
-      _parseApiResult(
-        res: await _getDataFromAPI(
-          startTime: daytMidnight,
-          endTime: dayAt2359,
-          zone: zone.name,
+      _prices.addAll(
+        await APIWrapperES().fetchData(
+          dayAtMidnight: dayAtMidnight,
+          dayAt2359: dayAt2359,
+          zone: zone,
+          location: _location,
         ),
-        zone: zone,
       );
+
       //populate price averages
       _updatePriceAverage(time: dateTime, zone: zone);
 
@@ -151,40 +133,6 @@ class PriceWatcher {
           'getPricesFromAPI added ${pricePerHour.toString()} in ${zone.name}',
         );
       }
-    }
-  }
-
-  _parseApiResult({
-    required Map<String, dynamic> res,
-    required PriceZone zone,
-  }) {
-    final List included = res["included"];
-    bool found1001 = false;
-
-    //find PVPC with group id 1001
-    for (var element in included) {
-      if (element['id'] == '1001') {
-        found1001 = true;
-        final Map<String, dynamic> attributes = element['attributes'];
-        final List values = attributes['values'];
-
-        for (var value in values) {
-          var priceInCents = roundDoubleToPrecision(value['value'] / 1000, 5);
-          _prices.add(
-            PricePerHour(
-              time: TZDateTime.parse(_location, value['datetime']),
-              priceInEUR: priceInCents,
-              zone: zone,
-            ),
-          );
-        }
-      }
-    }
-    if (found1001 == false) {
-      _logger.e(
-        'parseApiResult: PVPC not included in result. Shutting down...',
-      );
-      throw Exception();
     }
   }
 
