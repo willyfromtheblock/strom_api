@@ -1,5 +1,5 @@
 # Strom_API
-[![Tests](https://github.com/willyfromtheblock/strom_api/actions/workflows/test.yaml/badge.svg)](https://github.com/willyfromtheblock/strom_api/actions/workflows/test.yaml)
+[![Tests](https://github.com/willyfromtheblock/Strom_API/actions/workflows/test.yaml/badge.svg)](https://github.com/willyfromtheblock/Strom_API/actions/workflows/test.yaml)
 
 A versatile **RESTful** program that aggregates and serves hourly data for **electricity prices**.
 
