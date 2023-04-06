@@ -42,7 +42,7 @@ class PriceWatcher {
 
     //schedule crons
     /* 
-    This cronjob will get the price data every day at 20:30 (Madrid time)
+    This cronjob will get the price data every day at 20:30 (Madrid time) for the Spanish API
     */
     _cron.schedule(Schedule.parse('30 20 * * *'), () async {
       //default timezone for docker-compose.yml is Europe/Madrid as well
@@ -78,17 +78,19 @@ class PriceWatcher {
     final dayAtMidnight = '${isoDate}T00:00';
     final dayAt2359 = '${isoDate}T23:59';
 
-    if (_prices
-            .firstWhereOrNull((element) => element.time.day == dateTime.day) !=
-        null) {
-      _logger.w(
-        'getPricesFromAPI: data already exists for day ${dateTime.day}',
-      );
-      return;
-    }
-
     //loop through pricezones, get the respective prices and update their averages
     for (var zone in PriceZone.values) {
+      if (_prices.firstWhereOrNull(
+            (element) =>
+                element.time.day == dateTime.day && element.zone == zone,
+          ) !=
+          null) {
+        _logger.w(
+          'getPricesFromAPI: data already exists for day ${dateTime.day} in ${zone.name}',
+        );
+        return;
+      }
+
       _logger.i('getPricesFromAPI: for $isoDate in ${zone.name}');
       List<PricePerHour> results = [];
 
