@@ -124,6 +124,8 @@ class RESTServer {
       },
     );
 
+    //TODO endpoint for range
+
     final server = await _httpServer.listen(
       int.parse(Platform.environment['HTTP_PORT']!),
     );
