@@ -42,15 +42,18 @@ class RESTServer {
 
   Future<void> serve() async {
     //API header middleware
-    _httpServer.all('*', (req, res) {
-      if (req.headers.value('X-RapidAPI-Proxy-Secret') !=
-          Platform.environment['RAPID_API_SECRET']!) {
-        throw AlfredException(
-          401,
-          {'error': 'You are not authorized to perform this operation'},
-        );
-      }
-    });
+    _httpServer.all(
+      '*',
+      (req, res) {
+        if (req.headers.value('X-RapidAPI-Proxy-Secret') !=
+            Platform.environment['RAPID_API_SECRET']!) {
+          throw AlfredException(
+            401,
+            {'error': 'You are not authorized to perform this operation'},
+          );
+        }
+      },
+    );
 
     /// price endpoint
     ///
