@@ -1,10 +1,10 @@
 version: '3.1'
 services:
-  pvpc_server:
+  strom_api:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: pvpc_server
+    container_name: strom_api
     environment: 
       - TZ=Europe/Madrid #do NOT change
       - PRICE_LOG_LEVEL=info

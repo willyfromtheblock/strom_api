@@ -1,4 +1,4 @@
-import '../bin/pvpc_server.dart' as app;
+import '../bin/strom_api.dart' as app;
 import 'package:test/test.dart';
 
 void main() {

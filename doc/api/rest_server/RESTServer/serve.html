@@ -28,7 +28,7 @@
 <header id="title">
   <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
   <ol class="breadcrumbs gt-separated dark hidden-xs">
-    <li><a href="../../index.html">pvpc_server</a></li>
+    <li><a href="../../index.html">strom_api</a></li>
     <li><a href="../../rest_server/rest_server-library.html">rest_server</a></li>
     <li><a href="../../rest_server/RESTServer-class.html">RESTServer</a></li>
     <li class="self-crumb">serve method</li>
@@ -70,6 +70,23 @@
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">Future&lt;void&gt; serve() async {
+  &#47;&#47;API header middleware
+  &#47;&#47;Enable only if API protected mode is true in env variables
+  if (protectedMode == true) {
+    _httpServer.all(
+      &#39;*&#39;,
+      (req, res) {
+        if (req.headers.value(&#39;X-RapidAPI-Proxy-Secret&#39;) !=
+            Platform.environment[&#39;RAPID_API_SECRET&#39;]!) {
+          throw AlfredException(
+            401,
+            {&#39;error&#39;: &#39;You are not authorized to perform this operation&#39;},
+          );
+        }
+      },
+    );
+  }
+
   &#47;&#47;&#47; price endpoint
   &#47;&#47;&#47;
   &#47;&#47;&#47; Returns JSON with price data for the hour that matches the timestamp in the given zone.
@@ -154,7 +171,7 @@
 </header>
 
 <ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
-  <li><a href="../../index.html">pvpc_server</a></li>
+  <li><a href="../../index.html">strom_api</a></li>
   <li><a href="../../rest_server/rest_server-library.html">rest_server</a></li>
   <li><a href="../../rest_server/RESTServer-class.html">RESTServer</a></li>
   <li class="self-crumb">serve method</li>
@@ -174,6 +191,7 @@
           <li class="inherited"><a href="../../rest_server/RESTServer/hashCode.html">hashCode</a></li>
           <li><a href="../../rest_server/RESTServer/notInSetException.html">notInSetException</a></li>
           <li><a href="../../rest_server/RESTServer/notInZoneException.html">notInZoneException</a></li>
+          <li><a href="../../rest_server/RESTServer/protectedMode.html">protectedMode</a></li>
           <li class="inherited"><a href="../../rest_server/RESTServer/runtimeType.html">runtimeType</a></li>
 
         <li class="section-title"><a href="../../rest_server/RESTServer-class.html#instance-methods">Methods</a></li>
@@ -198,7 +216,7 @@
 
 <footer>
   <span class="no-break">
-    pvpc_server
+    strom_api
       1.0.0
   </span>
 

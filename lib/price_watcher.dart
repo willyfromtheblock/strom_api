@@ -2,8 +2,8 @@ import 'dart:io';
 
 import 'package:collection/collection.dart';
 import 'package:cron/cron.dart';
-import 'package:pvpc_server/price_api_wrappers/api_wrapper_es.dart';
-import 'package:pvpc_server/tools/price_zone.dart';
+import 'package:strom_api/price_api_wrappers/api_wrapper_es.dart';
+import 'package:strom_api/tools/price_zone.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart';
 

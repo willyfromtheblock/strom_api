@@ -5,8 +5,8 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
   <meta name="generator" content="made with love by dartdoc 6.1.5">
-  <meta name="description" content="pvpc_server API docs, for the Dart programming language.">
-  <title>pvpc_server - Dart API docs</title>
+  <meta name="description" content="strom_api API docs, for the Dart programming language.">
+  <title>strom_api - Dart API docs</title>
 
 
   
@@ -29,9 +29,9 @@
 <header id="title">
   <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
   <ol class="breadcrumbs gt-separated dark hidden-xs">
-    <li class="self-crumb">pvpc_server package</li>
+    <li class="self-crumb">strom_api package</li>
   </ol>
-  <div class="self-name">pvpc_server</div>
+  <div class="self-name">strom_api</div>
   <form class="search navbar-right" role="search">
     <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
   </form>
@@ -49,8 +49,89 @@
   <div id="dartdoc-main-content" class="main-content">
       
 <section class="desc markdown">
-  <p>A sample command-line application with an entrypoint in <code>bin/</code>, library code
-in <code>lib/</code>, and example unit test in <code>test/</code>.</p>
+  <h1 id="strom_api">Strom_API</h1>
+<p><a href="https://github.com/willyfromtheblock/strom_api/actions/workflows/test.yaml"><img src="https://github.com/willyfromtheblock/strom_api/actions/workflows/test.yaml/badge.svg" alt="Tests"></a></p>
+<p>A versatile <strong>RESTful</strong> program that aggregates and serves hourly data for <strong>electricity prices</strong>.</p>
+<p>Just run this server, and it will do all the heavy lifting for you.</p>
+<h1 id="suported-countries">Suported Countries</h1>
+<h3 id="spain-pvpc">Spain (PVPC)</h3>
+<ul>
+<li>Data Source: REData API</li>
+<li>The server will automatically fetch the price data for the next day, each day at 20:30 (Madrid time).</li>
+</ul>
+<h2 id="examples">Examples</h2>
+<h3 id="home-automation">Home Automation</h3>
+<ul>
+<li>Use as data source in home automation to make decisions based on current power price</li>
+<li>see <a href="/openhab_example/strom_update.js" title="**openhab_example/strom_update.js**"><strong>openhab_example/strom_update.js</strong></a> (you'll need to create the referenced items before)</li>
+</ul>
+<h3 id="rest-endpoints">REST endpoints</h3>
+<ul>
+<li>
+<p>General schema: endpoint/<strong>timestampInSecondsSinceEpoch</strong>/<strong>zone</strong></p>
+</li>
+<li>
+<p><a href="https://strom-docs.coinerella.com/price_zones/PriceZone" title="Available price zones">Available price zones</a></p>
+</li>
+<li>
+<p>GET <code>https://strom.coinerella.com/price/0/peninsular</code></p>
+<pre class="language-json"><code class="language-json">{"time":"2023-04-05 14:00:00.000+0200","zone":"peninsular","price":0.11416,"price_rating_percent":64.18,"price_rating":"off_peak"}
+</code></pre>
+</li>
+<li>
+<p>GET <code>https://strom.coinerella.com/price-average/0/canarias</code></p>
+<pre class="language-json"><code class="language-json">{"time":"2023-04-05 00:00:00.000","zone":"canarias","average_price":0.17787}
+</code></pre>
+<p>0 is the timestamp in both cases. <strong>0 will always return the current price in the local time for the requested zone.</strong></p>
+</li>
+<li>
+<p><a href="https://strom-docs.coinerella.com/rest_server/RESTServer/serve" title="Detailed endpoint documentation">Detailed endpoint documentation</a></p>
+</li>
+</ul>
+<h1 id="why-should-i-use-this-server-over-another-api">Why should I use this server over another API?</h1>
+<ul>
+<li>Timeframes can be requested in seconds since epoch</li>
+<li>Price average for the given day is provided to classify each price in the daily context</li>
+<li>Easier to use REST endpoints</li>
+<li>Updates and cleans up data automatically (set and forget)</li>
+<li>Open source</li>
+<li>Great performance, thanks to <strong>Dart</strong> and <strong>Alfred</strong></li>
+</ul>
+<h1 id="run-your-own">Run your own</h1>
+<h3 id="prerequisites">Prerequisites</h3>
+<ul>
+<li>docker-compose</li>
+</ul>
+<h3 id="configure">Configure</h3>
+<ul>
+<li>adapt environment in <strong>docker-compose.yaml</strong> accordingly or create a <strong>docker-compose.override.yaml</strong> file</li>
+<li><strong>do not change TZ</strong></li>
+<li><strong>RATING_MARGIN</strong> is a margin value in percent for price classification. Defaults to 10, meaning only prices 10% below the daily average will be considered off-peak. <strong>Must be between 0 and 99.</strong></li>
+</ul>
+<h3 id="setup">Setup</h3>
+<ul>
+<li>execute <code>./deploy.sh</code></li>
+<li>Default port is 3001. <strong>Congratulations</strong>. You now have a running Strom_API on this port.
+It can easily be reverse proxied if need be.</li>
+</ul>
+<h3 id="updating">Updating</h3>
+<ul>
+<li>executing <code>./deploy.sh </code>will always rebuild the main branch of this repository and restart the container</li>
+</ul>
+<h2 id="development">Development</h2>
+<h3 id="run-tests">Run tests</h3>
+<ul>
+<li><code>dart test test/app_test_no_env.dart</code></li>
+<li><code>dart test test/app_test_with_env.dart</code></li>
+</ul>
+<h3 id="simulate-github-actions">Simulate Github actions</h3>
+<ul>
+<li><code>act --secret-file my.secrets</code></li>
+</ul>
+<h3 id="generate-docs">Generate docs</h3>
+<ul>
+<li><code>dart doc .</code></li>
+</ul>
 </section>
 
 
@@ -69,7 +150,7 @@ in <code>lib/</code>, and example unit test in <code>test/</code>.</p>
   <span class="name"><a href="rest_server/rest_server-library.html">rest_server</a></span> 
 
 </dt>
-<dd>Find the implementation of the PVPC endpoints.
+<dd>Find the implementation of the Strom_API endpoints.
 </dd>
 
         </dl>
@@ -85,11 +166,11 @@ in <code>lib/</code>, and example unit test in <code>test/</code>.</p>
 </header>
 
 <ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
-  <li class="self-crumb">pvpc_server package</li>
+  <li class="self-crumb">strom_api package</li>
 </ol>
 
 
-    <h5 class="hidden-xs"><span class="package-name">pvpc_server</span> <span class="package-kind">package</span></h5>
+    <h5 class="hidden-xs"><span class="package-name">strom_api</span> <span class="package-kind">package</span></h5>
     <ol>
       <li class="section-title">Libraries</li>
       <li class="section-subtitle">REST</li>
@@ -106,7 +187,7 @@ in <code>lib/</code>, and example unit test in <code>test/</code>.</p>
 
 <footer>
   <span class="no-break">
-    pvpc_server
+    strom_api
       1.0.0
   </span>
 

@@ -1,10 +1,10 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:pvpc_server/price_watcher.dart';
-import 'package:pvpc_server/tools/price_zone.dart';
+import 'package:strom_api/price_watcher.dart';
+import 'package:strom_api/tools/price_zone.dart';
 
-import '../bin/pvpc_server.dart' as app;
+import '../bin/strom_api.dart' as app;
 import 'package:test/test.dart';
 
 void main() {

@@ -1,3 +1,3 @@
 git pull
-docker-compose build --no-cache pvpc_server
+docker-compose build --no-cache strom_api
 docker-compose up -d

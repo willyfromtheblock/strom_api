@@ -1,4 +1,4 @@
-import 'package:pvpc_server/tools/price_zone.dart';
+import 'package:strom_api/tools/price_zone.dart';
 
 enum PriceRating { peak, offPeak }
 

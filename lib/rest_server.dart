@@ -1,4 +1,4 @@
-/// Find the implementation of the PVPC endpoints.
+/// Find the implementation of the Strom_API endpoints.
 ///
 /// {@category REST}
 library rest_server;
@@ -8,7 +8,7 @@ import 'dart:io';
 
 import 'package:alfred/alfred.dart';
 import 'package:collection/collection.dart';
-import 'package:pvpc_server/tools/price_zone.dart';
+import 'package:strom_api/tools/price_zone.dart';
 import 'package:timezone/timezone.dart';
 
 import 'price_watcher.dart';
@@ -32,15 +32,12 @@ class RESTServer {
     400,
     {
       "message":
-          "This timestamp is not included in the current table. pvpc_server only serves the present day and the next day. Next day's data is available after 20:30 (Madrid time) of the preceeding day."
+          "This timestamp is not included in the current table. Strom_API does not serve this time frame."
     },
   );
   final AlfredException notInZoneException = AlfredException(
     400,
-    {
-      "message":
-          "Invalid zone. Valid values are peninsular, canarias, baleares, ceuta and melilla"
-    },
+    {"message": "Invalid zone."},
   );
 
   Future<void> serve() async {

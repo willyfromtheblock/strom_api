@@ -1,36 +1,39 @@
-# PVPC_Server
-[![Tests](https://github.com/willyfromtheblock/pvpc_server/actions/workflows/test.yaml/badge.svg)](https://github.com/willyfromtheblock/pvpc_server/actions/workflows/test.yaml)
+# Strom_API
+[![Tests](https://github.com/willyfromtheblock/strom_api/actions/workflows/test.yaml/badge.svg)](https://github.com/willyfromtheblock/strom_api/actions/workflows/test.yaml)
 
-A versatile **RESTful** program that aggregates and serves hourly data for **Spanish electricity prices** from the Precio voluntario para el pequeño consumidor (**PVPC**).
+A versatile **RESTful** program that aggregates and serves hourly data for **electricity prices**.
 
-The server will automatically fetch the price data for the next day, each day at 20:30 (Madrid time).
 Just run this server, and it will do all the heavy lifting for you. 
 
-*Data Source: REData API*
+# Suported Countries
+### Spain (PVPC) 
+- Data Source: REData API
+- The server will automatically fetch the price data for the next day, each day at 20:30 (Madrid time).
+
 ## Examples
 ### Home Automation
 - Use as data source in home automation to make decisions based on current power price
-- see [**openhab_example/pvpc_update.js**](/openhab_example/pvpc_update.js "**openhab_example/pvpc_update.js**") (you'll need to create the referenced items before)
+- see [**openhab_example/strom_update.js**](/openhab_example/strom_update.js "**openhab_example/strom_update.js**") (you'll need to create the referenced items before)
 
 ### REST endpoints
 - General schema: endpoint/**timestampInSecondsSinceEpoch**/**zone**
-- [Available price zones](https://pvpc-docs.coinerella.com/price_zones/PriceZone "Available price zones")
-- GET `https://pvpc.coinerella.com/price/0/peninsular`
+- [Available price zones](https://strom-docs.coinerella.com/price_zones/PriceZone "Available price zones")
+- GET `https://strom.coinerella.com/price/0/peninsular`
 	```json
 	{"time":"2023-04-05 14:00:00.000+0200","zone":"peninsular","price":0.11416,"price_rating_percent":64.18,"price_rating":"off_peak"}
 	```
 	
-- GET `https://pvpc.coinerella.com/price-average/0/canarias`
+- GET `https://strom.coinerella.com/price-average/0/canarias`
 
 	```json
 	{"time":"2023-04-05 00:00:00.000","zone":"canarias","average_price":0.17787}
 	```
 
 	0 is the timestamp in both cases. **0 will always return the current price in the local time for the requested zone.**
-- [Detailed endpoint documentation](https://pvpc-docs.coinerella.com/rest_server/RESTServer/serve "Detailed endpoint documentation") 
+- [Detailed endpoint documentation](https://strom-docs.coinerella.com/rest_server/RESTServer/serve "Detailed endpoint documentation") 
 
 
-## Why should I use this server over the REData API?
+# Why should I use this server over another API?
 - Timeframes can be requested in seconds since epoch
 - Price average for the given day is provided to classify each price in the daily context
 - Easier to use REST endpoints
@@ -38,7 +41,7 @@ Just run this server, and it will do all the heavy lifting for you.
 - Open source
 - Great performance, thanks to **Dart** and **Alfred**
 
-## Run your own
+# Run your own
 ### Prerequisites
 - docker-compose
 
@@ -49,7 +52,7 @@ Just run this server, and it will do all the heavy lifting for you.
 
 ### Setup
 - execute `./deploy.sh`
-- Default port is 3001. **Congratulations**. You now have a running PVPC_Server on this port. 
+- Default port is 3001. **Congratulations**. You now have a running Strom_API on this port. 
 It can easily be reverse proxied if need be.
 
 ### Updating

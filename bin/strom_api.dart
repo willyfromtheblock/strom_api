@@ -1,9 +1,9 @@
 import 'dart:io';
 
-import 'package:pvpc_server/rest_server.dart';
-import 'package:pvpc_server/price_watcher.dart';
-import 'package:pvpc_server/tools/http_wrapper.dart';
-import 'package:pvpc_server/tools/logger.dart';
+import 'package:strom_api/rest_server.dart';
+import 'package:strom_api/price_watcher.dart';
+import 'package:strom_api/tools/http_wrapper.dart';
+import 'package:strom_api/tools/logger.dart';
 
 Future<void> main() async {
   Map<String, String> env = Platform.environment;
