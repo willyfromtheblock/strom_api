@@ -16,6 +16,9 @@ import 'tools/logger.dart';
 
 class RESTServer {
   final _logger = LoggerWrapper().logger;
+  final protectedMode;
+
+  RESTServer({required this.protectedMode});
 
   final _httpServer = Alfred(
     logLevel: LogType.values.firstWhere(
@@ -42,18 +45,21 @@ class RESTServer {
 
   Future<void> serve() async {
     //API header middleware
-    _httpServer.all(
-      '*',
-      (req, res) {
-        if (req.headers.value('X-RapidAPI-Proxy-Secret') !=
-            Platform.environment['RAPID_API_SECRET']!) {
-          throw AlfredException(
-            401,
-            {'error': 'You are not authorized to perform this operation'},
-          );
-        }
-      },
-    );
+    //Enable only if API protected mode is true in env variables
+    if (protectedMode == true) {
+      _httpServer.all(
+        '*',
+        (req, res) {
+          if (req.headers.value('X-RapidAPI-Proxy-Secret') !=
+              Platform.environment['RAPID_API_SECRET']!) {
+            throw AlfredException(
+              401,
+              {'error': 'You are not authorized to perform this operation'},
+            );
+          }
+        },
+      );
+    }
 
     /// price endpoint
     ///

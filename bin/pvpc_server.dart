@@ -12,7 +12,7 @@ Future<void> main() async {
     "HTTP_LOG_LEVEL",
     "HTTP_PORT",
     "RATING_MARGIN",
-    "RAPID_API_SECRET"
+    "PROTECTED_MODE",
   ];
 
   for (var requiredEnv in requiredEnvs) {
@@ -29,8 +29,13 @@ Future<void> main() async {
     throw Exception("RATING_MARGIN needs to be a positive number");
   }
 
+  bool protectedMode = env['PROTECTED_MODE'] == 'true';
+  if (protectedMode == true && !env.containsKey('RAPID_API_SECRET')) {
+    throw Exception("RAPID_API_SECRET needs to be set in PROTECTED_MODE");
+  }
+
   LoggerWrapper().init();
   HttpWrapper().init();
   await PriceWatcher().init();
-  await RESTServer().serve();
+  await RESTServer(protectedMode: protectedMode).serve();
 }

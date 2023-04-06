@@ -11,6 +11,8 @@ services:
       - HTTP_LOG_LEVEL=info
       - HTTP_PORT=3001
       - RATING_MARGIN=10
+      - PROTECTED_MODE=false
+      - RAPID_API_SECRET=
     restart: always
     ports: 
       - "3001:3001"    
