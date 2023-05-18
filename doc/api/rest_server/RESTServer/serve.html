@@ -153,6 +153,37 @@
     },
   );
 
+  &#47;&#47;&#47; price-daily endpoint
+  &#47;&#47;&#47;
+  &#47;&#47;&#47; Returns JSON with price data for the day that matches the timestamp in the given zone.
+  &#47;&#47;&#47; Returned &quot;time&quot; object is  l o c a l time in the given zone.
+  &#47;&#47;&#47;
+  &#47;&#47;&#47; Parameter 1:
+  &#47;&#47;&#47; int - timestamp: in s e c o n d s unix time U T C
+  &#47;&#47;&#47; if timestamp is 0, current day for the zone will be used
+  &#47;&#47;&#47;
+  &#47;&#47;&#47; Parameter 2:
+  &#47;&#47;&#47; String - zone: either peninsular, canarias, baleares, ceuta or melilla
+
+  _httpServer.get(
+    &#39;&#47;price-daily&#47;:timestamp:int&#47;:zone:[a-z]+&#39;,
+    (req, res) async {
+      final zone = _convertStringToZone(req.params[&#39;zone&#39;]);
+      final timestamp = _parseDateTime(req.params[&#39;timestamp&#39;]);
+      final timeNow = _getTimeForZone(zone, timestamp);
+
+      final prices = PriceWatcher().prices;
+      final result = prices.where(
+        (element) =&gt; element.time.day == timeNow.day &amp;&amp; element.zone == zone,
+      );
+      if (result.isEmpty) {
+        throw notInSetException;
+      }
+
+      await res.json(result.map((e) =&gt; e.toMap()).toList());
+    },
+  );
+
   final server = await _httpServer.listen(
     int.parse(Platform.environment[&#39;HTTP_PORT&#39;]!),
   );

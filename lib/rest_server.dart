@@ -124,7 +124,36 @@ class RESTServer {
       },
     );
 
-    //TODO endpoint for range
+    /// price-daily endpoint
+    ///
+    /// Returns JSON with price data for the day that matches the timestamp in the given zone.
+    /// Returned "time" object is  l o c a l time in the given zone.
+    ///
+    /// Parameter 1:
+    /// int - timestamp: in s e c o n d s unix time U T C
+    /// if timestamp is 0, current day for the zone will be used
+    ///
+    /// Parameter 2:
+    /// String - zone: either peninsular, canarias, baleares, ceuta or melilla
+
+    _httpServer.get(
+      '/price-daily/:timestamp:int/:zone:[a-z]+',
+      (req, res) async {
+        final zone = _convertStringToZone(req.params['zone']);
+        final timestamp = _parseDateTime(req.params['timestamp']);
+        final timeNow = _getTimeForZone(zone, timestamp);
+
+        final prices = PriceWatcher().prices;
+        final result = prices.where(
+          (element) => element.time.day == timeNow.day && element.zone == zone,
+        );
+        if (result.isEmpty) {
+          throw notInSetException;
+        }
+
+        await res.json(result.map((e) => e.toMap()).toList());
+      },
+    );
 
     final server = await _httpServer.listen(
       int.parse(Platform.environment['HTTP_PORT']!),

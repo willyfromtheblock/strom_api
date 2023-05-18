@@ -94,6 +94,49 @@ void main() {
       },
     );
     group(
+      'price-daily',
+      () {
+        test('get all available zones', () async {
+          for (var zone in PriceZones.values) {
+            await dio.get('/price-daily/0/${zone.name}');
+          }
+        });
+
+        test('get non existing zone', () async {
+          expect(
+            () async => await dio.get(
+              '/price-daily/0/berlin',
+            ),
+            throwsA(
+              isA<DioError>(),
+            ),
+          );
+        });
+
+        test('get price in one hour in peninsular', () async {
+          final time = DateTime.now().add(Duration(hours: 1));
+          final secondsSinceEpoch = time.millisecondsSinceEpoch ~/ 1000;
+          await dio.get(
+            '/price-daily/$secondsSinceEpoch/peninsular',
+          );
+        });
+
+        test('get price in two days in peninsular', () async {
+          final time = DateTime.now().add(Duration(days: 2));
+          final secondsSinceEpoch = time.millisecondsSinceEpoch ~/ 1000;
+
+          expect(
+            () async => await dio.get(
+              '/price-daily/$secondsSinceEpoch/peninsular',
+            ),
+            throwsA(
+              isA<DioError>(),
+            ),
+          );
+        });
+      },
+    );
+    group(
       'price-average',
       () {
         test('get all available zones', () async {
