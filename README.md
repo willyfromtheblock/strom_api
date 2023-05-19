@@ -29,6 +29,25 @@ Just run this server, and it will do all the heavy lifting for you.
 	{"time":"2023-04-05 00:00:00.000","zone":"canarias","average_price":0.17787}
 	```
 
+- GET `https://strom.coinerella.com/price-daily/0/peninsular`
+
+	```json
+	[{
+        "time": "2023-04-05 00:00:00.000+0200",
+        "zone": "peninsular",
+        "price": 0.10931,
+        "price_rating_percent": 87.88,
+        "price_rating": "off_peak"
+    },
+    {
+        "time": "2023-04-05 01:00:00.000+0200",
+        "zone": "peninsular",
+        "price": 0.10634,
+        "price_rating_percent": 85.5,
+        "price_rating": "off_peak"
+    }...]
+	```
+
 	0 is the timestamp in both cases. **0 will always return the current price in the local time for the requested zone.**
 - [Detailed endpoint documentation](https://strom-docs.coinerella.com/rest_server/RESTServer/serve "Detailed endpoint documentation") 
 
