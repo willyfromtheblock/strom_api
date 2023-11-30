@@ -13,9 +13,7 @@ services:
       - RATING_MARGIN=10
       - PROTECTED_MODE=false
       - RAPID_API_SECRET=
-    restart:
-      always
-      delay: 1m
+    restart: always
     ports: 
       - "3001:3001"    
     logging:
