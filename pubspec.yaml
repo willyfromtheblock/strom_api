@@ -7,7 +7,7 @@ environment:
   sdk: '>=2.19.2 <3.0.0'
 
 dev_dependencies:
-  lints: ^2.0.0
+  lints: ^3.0.0
   test: ^1.21.0
 
 dependencies:
@@ -15,6 +15,6 @@ dependencies:
   collection: ^1.17.1
   cron: ^0.5.1
   dio: ^5.0.1
-  dio_smart_retry: ^5.0.0
-  logger: ^1.2.2
+  dio_smart_retry: ^6.0.0
+  logger: ^2.0.2
   timezone: ^0.9.1

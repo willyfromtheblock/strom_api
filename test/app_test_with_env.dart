@@ -16,7 +16,7 @@ void main() {
       BaseOptions(
         baseUrl: restURL,
         headers: {
-          "X-RapidAPI-Proxy-Secret": Platform.environment['RAPID_API_SECRET']
+          "X-RapidAPI-Proxy-Secret": Platform.environment['RAPID_API_SECRET'],
         },
       ),
     );
@@ -65,7 +65,7 @@ void main() {
               '/price/0/berlin',
             ),
             throwsA(
-              isA<DioError>(),
+              isA<DioException>(),
             ),
           );
         });
@@ -87,7 +87,7 @@ void main() {
               '/price/$secondsSinceEpoch/peninsular',
             ),
             throwsA(
-              isA<DioError>(),
+              isA<DioException>(),
             ),
           );
         });
@@ -108,7 +108,7 @@ void main() {
               '/price-daily/0/berlin',
             ),
             throwsA(
-              isA<DioError>(),
+              isA<DioException>(),
             ),
           );
         });
@@ -130,7 +130,7 @@ void main() {
               '/price-daily/$secondsSinceEpoch/peninsular',
             ),
             throwsA(
-              isA<DioError>(),
+              isA<DioException>(),
             ),
           );
         });
@@ -151,7 +151,7 @@ void main() {
               '/price-average/0/berlin',
             ),
             throwsA(
-              isA<DioError>(),
+              isA<DioException>(),
             ),
           );
         });
@@ -173,7 +173,7 @@ void main() {
               '/price-average/$secondsSinceEpoch/peninsular',
             ),
             throwsA(
-              isA<DioError>(),
+              isA<DioException>(),
             ),
           );
         });

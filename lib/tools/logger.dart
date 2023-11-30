@@ -24,7 +24,7 @@ class LoggerWrapper {
       case "error":
         return Level.error;
       case "nothing":
-        return Level.nothing;
+        return Level.off;
       default:
         return Level.info;
     }
