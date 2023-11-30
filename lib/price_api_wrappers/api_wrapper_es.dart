@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:timezone/timezone.dart';
 
 import '../models/price_per_hour.dart';
@@ -83,7 +85,7 @@ class APIWrapperES {
       _logger.e(
         'parseApiResult: PVPC not included in result. Shutting down...',
       );
-      throw Exception();
+      exit(1);
     }
     return answer;
   }
