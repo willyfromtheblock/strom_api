@@ -49,7 +49,7 @@ class APIWrapperES {
       _logger.e(
         'getDataFromAPI: Unable to get prices from API. Shutting down...',
       );
-      throw Exception(e.toString());
+      exit(1);
     }
   }
 
