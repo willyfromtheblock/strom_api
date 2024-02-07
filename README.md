@@ -65,7 +65,7 @@ Just run this server, and it will do all the heavy lifting for you.
 - docker-compose
 
 ### Configure
-- adapt environment in **docker-compose.yaml** accordingly or create a **docker-compose.override.yaml** file
+- adapt environment in **.env**, see **.env.example*
 - **do not change TZ**
 - **RATING_MARGIN** is a margin value in percent for price classification. Defaults to 10, meaning only prices 10% below the daily average will be considered off-peak. **Must be between 0 and 99.**
 
