@@ -6,7 +6,7 @@ services:
       dockerfile: Dockerfile
     container_name: strom_api
     env-file: 
-    - .env
+      - .env
     restart: always
     ports: 
       - "3001:3001"    
