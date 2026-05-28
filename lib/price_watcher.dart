@@ -104,7 +104,6 @@ class PriceWatcher {
           case PriceZones.baleares:
           case PriceZones.ceuta:
           case PriceZones.melilla:
-          default:
             results = await APIWrapperES().fetchData(
               startTime: dayAtMidnight,
               endTime: dayAt2359,
