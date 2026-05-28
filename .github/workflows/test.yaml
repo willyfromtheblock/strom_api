@@ -12,6 +12,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: 3.3.0
       - name: Install dependencies
         run: dart pub get
       - name: Analyze project source
@@ -30,6 +32,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: 3.3.0
       - name: Install dependencies
         run: dart pub get
       - name: Run tests
@@ -45,6 +49,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: 3.3.0
       - name: Install dependencies
         run: dart pub get
       - name: Run tests
