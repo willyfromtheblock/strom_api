@@ -44,11 +44,14 @@ class PriceWatcher {
     /* 
     This cronjob will get the price data every day at 20:30 (Madrid time) for the Spanish API
     */
-    _cron.schedule(Schedule.parse('30 20 * * *'), () async {
-      //default timezone for docker-compose.yml is Europe/Madrid as well
-      _logger.i('cron: get price for next day');
+    _cron.schedule(Schedule.parse('*/15 20,21,22,23 * * *'), () async {
+      final now = TZDateTime.now(_location);
+      if (now.hour == 20 && now.minute < 30) {
+        return;
+      }
+      _logger.i('cron: check/fetch price for next day');
       await _getPricesFromAPI(
-        TZDateTime.now(_location).add(Duration(days: 1)),
+        now.add(Duration(days: 1)),
       );
     });
 
@@ -89,7 +92,7 @@ class PriceWatcher {
         _logger.w(
           'getPricesFromAPI: data already exists for day ${dateTime.day} in ${zone.name}',
         );
-        return;
+        continue;
       }
 
       _logger.i('getPricesFromAPI: for $isoDate in ${zone.name}');
