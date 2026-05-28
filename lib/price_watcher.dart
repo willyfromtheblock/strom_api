@@ -93,30 +93,33 @@ class PriceWatcher {
       }
 
       _logger.i('getPricesFromAPI: for $isoDate in ${zone.name}');
-      List<PricePerHour> results = [];
+      try {
+        List<PricePerHour> results;
+        switch (zone) {
+          case PriceZones.peninsular:
+          case PriceZones.canarias:
+          case PriceZones.baleares:
+          case PriceZones.ceuta:
+          case PriceZones.melilla:
+          default:
+            results = await APIWrapperES().fetchData(
+              startTime: dayAtMidnight,
+              endTime: dayAt2359,
+              zone: zone,
+              location: _location,
+            );
+        }
+        //add fetched prices
+        _prices.addAll(results);
 
-      switch (zone) {
-        case PriceZones.peninsular:
-        case PriceZones.canarias:
-        case PriceZones.baleares:
-        case PriceZones.ceuta:
-        case PriceZones.melilla:
-        default:
-          results = await APIWrapperES().fetchData(
-            startTime: dayAtMidnight,
-            endTime: dayAt2359,
-            zone: zone,
-            location: _location,
-          );
+        //populate price averages
+        _updatePriceAverage(time: dateTime, zone: zone);
+
+        //rate each hourly price
+        _rateHourlyPrices(dateTime, zone);
+      } catch (e) {
+        _logger.e('getPricesFromAPI: Failed to get/parse prices for $isoDate in ${zone.name}: $e');
       }
-      //add fetched prices
-      _prices.addAll(results);
-
-      //populate price averages
-      _updatePriceAverage(time: dateTime, zone: zone);
-
-      //rate each hourly price
-      _rateHourlyPrices(dateTime, zone);
     }
   }
 

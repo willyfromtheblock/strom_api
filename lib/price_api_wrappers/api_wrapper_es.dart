@@ -1,4 +1,3 @@
-import 'dart:io';
 
 import 'package:timezone/timezone.dart';
 
@@ -47,9 +46,9 @@ class APIWrapperES {
       );
     } catch (e) {
       _logger.e(
-        'getDataFromAPI: Unable to get prices from API. Shutting down...',
+        'getDataFromAPI: Unable to get prices from API: $e',
       );
-      exit(1);
+      throw Exception('Unable to get prices from API: $e');
     }
   }
 
@@ -58,7 +57,11 @@ class APIWrapperES {
     required PriceZones zone,
     required Location location,
   }) {
-    final List included = res["included"];
+    final List? included = res["included"];
+    if (included == null) {
+      _logger.e('parseApiResult: PVPC not included in result.');
+      throw Exception('parseApiResult: PVPC not included in result.');
+    }
     final List<PricePerHour> answer = [];
     bool found1001 = false;
 
@@ -83,9 +86,9 @@ class APIWrapperES {
     }
     if (found1001 == false) {
       _logger.e(
-        'parseApiResult: PVPC not included in result. Shutting down...',
+        'parseApiResult: PVPC not included in result.',
       );
-      exit(1);
+      throw Exception('parseApiResult: PVPC not included in result.');
     }
     return answer;
   }
