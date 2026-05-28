@@ -10,8 +10,8 @@ jobs:
   analyze-and-test-without-env:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: dart-lang/setup-dart@v1.5.0
+      - uses: actions/checkout@v4
+      - uses: dart-lang/setup-dart@v1
       - name: Install dependencies
         run: dart pub get
       - name: Analyze project source
@@ -28,8 +28,8 @@ jobs:
       PROTECTED_MODE: true
       RAPID_API_SECRET: ${{ secrets.RAPID_API_SECRET }}
     steps:
-      - uses: actions/checkout@v2
-      - uses: dart-lang/setup-dart@v1.5.0
+      - uses: actions/checkout@v4
+      - uses: dart-lang/setup-dart@v1
       - name: Install dependencies
         run: dart pub get
       - name: Run tests
@@ -43,8 +43,8 @@ jobs:
       RATING_MARGIN: 10
       PROTECTED_MODE: false
     steps:
-      - uses: actions/checkout@v2
-      - uses: dart-lang/setup-dart@v1.5.0
+      - uses: actions/checkout@v4
+      - uses: dart-lang/setup-dart@v1
       - name: Install dependencies
         run: dart pub get
       - name: Run tests
