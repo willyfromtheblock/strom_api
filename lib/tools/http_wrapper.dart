@@ -20,8 +20,8 @@ class HttpWrapper {
     _logger.e('HttpWrapper Dio ${data.toString()}');
   }
 
-  void init() {
-    String restURL = 'https://apidatos.ree.es/en';
+  void init({String? baseUrl, int? retries}) {
+    String restURL = baseUrl ?? Platform.environment['HTTP_BASE_URL'] ?? 'https://apidatos.ree.es/en';
 
     _dio = Dio(
       BaseOptions(baseUrl: restURL),
@@ -31,11 +31,11 @@ class HttpWrapper {
       RetryInterceptor(
         dio: _dio,
         logPrint: log,
-        retries: 10,
+        retries: retries ?? 10,
       ),
     );
 
-    _logger.d('Dio initialized ... $restURL');
+    _logger.d('Dio initialized ... $restURL (retries: ${retries ?? 10})');
   }
 
   Future<dynamic> post(String path, Map payload) async {

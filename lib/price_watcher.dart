@@ -76,7 +76,7 @@ class PriceWatcher {
     });
   }
 
-  Future<void> _getPricesFromAPI(DateTime dateTime) async {
+  Future<void> _getPricesFromAPI(DateTime dateTime, {bool throwOnError = false}) async {
     //TODO this is still ES specific and should be changed
     final isoDate = dateTime.toIso8601String().split('T')[0];
     final dayAtMidnight = '${isoDate}T00:00';
@@ -121,6 +121,9 @@ class PriceWatcher {
         _rateHourlyPrices(dateTime, zone);
       } catch (e) {
         _logger.e('getPricesFromAPI: Failed to get/parse prices for $isoDate in ${zone.name}: $e');
+        if (throwOnError) {
+          rethrow;
+        }
       }
     }
   }
@@ -159,7 +162,7 @@ class PriceWatcher {
 
   Future<void> _populatePriceData() async {
     final now = TZDateTime.now(_location);
-    await _getPricesFromAPI(now); //TODAY
+    await _getPricesFromAPI(now, throwOnError: true); //TODAY
 
     if (now.hour >= 20 && now.hour <= 23) {
       //check if init happened between 20 and 23 -> cron might not have run -> get tomorrows data
@@ -170,6 +173,7 @@ class PriceWatcher {
 
       await _getPricesFromAPI(
         now.add(Duration(days: 1)),
+        throwOnError: true,
       );
     }
   }
