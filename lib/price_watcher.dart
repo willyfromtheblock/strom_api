@@ -177,6 +177,11 @@ class PriceWatcher {
     final now = TZDateTime.now(_location);
     await _getPricesFromAPI(now, throwOnError: true); //TODAY
 
+    if (now.hour == 0) {
+      //Canarias is one hour behind Madrid -> still yesterday there
+      await _getPricesFromAPI(now.subtract(Duration(days: 1)));
+    }
+
     if (now.hour >= 20 && now.hour <= 23) {
       //check if init happened between 20 and 23 -> cron might not have run -> get tomorrows data
       if (now.hour == 20 && now.minute < 30) {
