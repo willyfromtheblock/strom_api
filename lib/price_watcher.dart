@@ -119,8 +119,21 @@ class PriceWatcher {
 
         //rate each hourly price
         _rateHourlyPrices(dateTime, zone);
+
+        //e.g. a zero average (unpublished placeholder data) yields NaN, which breaks JSON encoding
+        if (results
+            .any((p) => !p.priceRelativeToDayAverageInPercent.isFinite)) {
+          throw Exception(
+              'non-finite price rating, prices: ${results.map((p) => p.priceInEUR).toList()}');
+        }
       } catch (e) {
-        _logger.e('getPricesFromAPI: Failed to get/parse prices for $isoDate in ${zone.name}: $e');
+        //roll back partial data, otherwise the "data already exists" check blocks every retry
+        _prices
+            .removeWhere((p) => p.time.day == dateTime.day && p.zone == zone);
+        _priceAverages
+            .removeWhere((a) => a.time.day == dateTime.day && a.zone == zone);
+        _logger.e(
+            'getPricesFromAPI: Failed to get/parse prices for $isoDate in ${zone.name}: $e');
         if (throwOnError) {
           rethrow;
         }
